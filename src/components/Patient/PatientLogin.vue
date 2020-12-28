@@ -63,13 +63,10 @@ export default {
       }
       this.error = false
       localStorage.patientToken = req.data.token
-      this.currentPatient = req.data.token
-      this.$store.dispatch('login')
       this.$router.push('/patient/dashboard')
     },
     loginFailed () {
       this.error = 'Login failed!'
-      this.$store.dispatch('logout')
       delete localStorage.patientToken
     }
   }
