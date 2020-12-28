@@ -1,6 +1,6 @@
-# bookstore-frontend
+# HIS-frontend
 
-> Frontend for https://github.com/paweljw/bookstore-backend app, built for a series of articles [on my blog](https://paweljw.github.io/tags/#vue-frontend-series-list).
+> Frontend for https://github.com/moustafaomar/HIS app.
 
 ## Build Setup
 
@@ -23,5 +23,3 @@ npm run unit
 # run all tests
 npm test
 ```
-
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
