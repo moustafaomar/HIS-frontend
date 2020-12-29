@@ -44,7 +44,7 @@ export default {
   methods: {
     checkCurrentLogin () {
       axios.get('http://localhost:5000/doctor/dashboard', {headers: {'x-access-token': this.currentUser}}).then((res) => {
-        this.$router.push('/patient/dashboard')
+        this.$router.push('/doctor/dashboard')
       }).catch(() => {})
     },
     login () {

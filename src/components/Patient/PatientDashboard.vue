@@ -63,22 +63,36 @@ export default {
   data () {
     return {
       name: '',
-      noOfDoctors: 0
+      noOfDoctors: 0,
+      patient: ''
     }
   },
   created () {
-    this.checkCurrentLogin()
-    this.getData()
+    if (this.currentPatient) {
+      this.patient = this.currentPatient
+    }
+    this.name = this.getData()
+    if (this.patient !== '') {
+      console.log(this.patient)
+      this.checkCurrentLogin()
+    } else {
+      this.$router.push('/patient/login')
+    }
   },
   updated () {
-    this.checkCurrentLogin()
+    this.getData()
+    if (this.patient !== '') {
+      this.checkCurrentLogin()
+    } else {
+      this.$router.push('/patient/login')
+    }
   },
   computed: {
     ...mapGetters({ currentPatient: 'currentPatient' })
   },
   methods: {
     getData () {
-      axios.post('http://localhost:5000/patient/getdata', '', {headers: {'x-access-token': this.currentPatient}}).then((res) => {
+      axios.post('http://localhost:5000/patient/getdata', '', {headers: {'x-access-token': this.patient}}).then((res) => {
         if (res.status !== 200) {
           console.log(res.data.message)
         } else {
@@ -89,7 +103,7 @@ export default {
       })
     },
     checkCurrentLogin () {
-      axios.get('http://localhost:5000/patient/dashboard', {headers: {'x-access-token': this.currentPatient}}).then((res) => {
+      axios.get('http://localhost:5000/patient/dashboard', {headers: {'x-access-token': this.patient}}).then((res) => {
         if (res.status !== 200) {
           this.$router.push('/patient/login')
         }

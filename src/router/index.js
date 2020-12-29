@@ -5,11 +5,14 @@ import DoctorLogin from '../components/Doctor/DoctorLogin'
 import PatientLogin from '../components/Patient/PatientLogin'
 import PatientDashboard from '../components/Patient/PatientDashboard'
 import PatientSignup from '../components/Patient/PatientSignup'
+import DoctorLogout from '../components/Doctor/DoctorLogout'
+import PatientLogout from '../components/Patient/PatientLogout'
 import Logout from '@/components/Logout'
 import Index from '@/components/Index'
+import 'axios'
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   routes: [
     {
@@ -21,6 +24,10 @@ export default new Router({
       component: DoctorLogin
     },
     {
+      path: '/doctor/logouot',
+      component: DoctorLogout
+    },
+    {
       path: '/patient/signup',
       component: PatientSignup
     },
@@ -29,12 +36,18 @@ export default new Router({
       component: PatientLogin
     },
     {
+      path: '/patient/logout',
+      component: PatientLogout
+    },
+    {
       path: '/doctor/dashboard',
-      component: DoctorDashboard
+      component: DoctorDashboard,
+      meta: { doctor: true, patient: false }
     },
     {
       path: '/patient/dashboard',
-      component: PatientDashboard
+      component: PatientDashboard,
+      meta: { patient: true, doctor: false }
     },
     {
       path: '/logout',
@@ -42,3 +55,18 @@ export default new Router({
     }
   ]
 })
+router.beforeEach((to, from, next) => {
+  if (to.meta) {
+    if (to.meta.doctor) {
+      if (!localStorage.token) {
+        next({ path: '/doctor/login' })
+      } else next()
+    } else if (to.meta.patient) {
+      if (!localStorage.patientToken) {
+        next({ path: '/patient/login' })
+      } else next()
+    }
+  }
+  next()
+})
+export default router

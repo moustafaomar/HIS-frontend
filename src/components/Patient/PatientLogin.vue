@@ -32,18 +32,21 @@ export default {
     return {
       ssn: '',
       password: '',
-      error: false
+      error: false,
+      token: ''
     }
   },
   computed: {
     ...mapGetters({ currentPatient: 'currentPatient' })
   },
-  beforeMount () {
-    this.checkCurrentLogin()
+  updated () {
+    if (this.token) {
+      this.checkCurrentLogin()
+    }
   },
   methods: {
     checkCurrentLogin () {
-      axios.get('http://localhost:5000/patient/dashboard', {headers: {'x-access-token': this.currentPatient}}).then((res) => {
+      axios.get('http://localhost:5000/patient/dashboard', {headers: {'x-access-token': this.token}}).then((res) => {
         if (res.status === 200) {
           this.$router.push('/patient/dashboard')
         }
@@ -53,7 +56,13 @@ export default {
     },
     login () {
       axios.post('http://localhost:5000/patient/login', { 'SSN': this.ssn, 'password': this.password })
-        .then(request => this.loginSuccessful(request))
+        .then((request) => {
+          if (request.status === 200) {
+            this.loginSuccessful(request)
+          } else {
+            console.log(request.status)
+          }
+        })
         .catch(() => this.loginFailed())
     },
     loginSuccessful (req) {
