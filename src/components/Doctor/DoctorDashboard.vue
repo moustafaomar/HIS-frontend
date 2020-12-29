@@ -6,18 +6,15 @@
   <nav id="sidebar" class="sidebar-wrapper">
     <div class="sidebar-content">
       <div class="sidebar-brand">
-        <a href="#">pro sidebar</a>
-        <div id="close-sidebar">
-          <i class="fas fa-times"></i>
-        </div>
+        <a href="#">his - doctor</a>
       </div>
       <div class="sidebar-header">
         <div class="user-pic">
           <img class="img-responsive img-rounded" src="https://raw.githubusercontent.com/azouaoui-med/pro-sidebar-template/gh-pages/src/img/user.jpg" alt="User picture">
         </div>
         <div class="user-info">
-          <span class="user-name">Jhon
-            <strong>Smith</strong>
+          <span class="user-name">
+            <strong>{{this.name}}</strong>
           </span>
           <span class="user-role">Doctor</span>
         </div>
@@ -41,7 +38,7 @@
   <!-- sidebar-wrapper  -->
   <main class="page-content">
     <div class="container">
-      <h2>Pro Sidebar</h2>
+      <h2>HIS - Doctor</h2>
       <hr>
       <div class="row">
         <div class="form-group col-md-12">
@@ -51,26 +48,6 @@
         </div>
       </div>
       <hr>
-
-      <footer class="text-center">
-        <div class="mb-2">
-          <small>
-            © 2020 made with <i class="fa fa-heart" style="color:red"></i> by - <a target="_blank" rel="noopener noreferrer" href="https://azouaoui.netlify.com">
-              Mohamed Azouaoui
-            </a>
-          </small>
-        </div>
-
-        <div>
-          <a href="https://github.com/azouaoui-med" target="_blank">
-            <img alt="GitHub followers" src="https://img.shields.io/github/followers/azouaoui-med?label=github&style=social" />
-          </a>
-          <a href="https://twitter.com/azouaoui_med" target="_blank">
-            <img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/azouaoui_med?label=twitter&style=social" />
-          </a>
-        </div>
-      </footer>
-
     </div>
 
   </main>
@@ -85,26 +62,33 @@ export default {
   name: 'DoctorDashboard',
   data () {
     return {
-      noOfPatients: 0
+      noOfPatients: 0,
+      name: '',
+      doctor: ''
     }
   },
   created () {
-    this.checkCurrentLogin()
+    if (this.currentUser) {
+      this.doctor = this.currentUser
+    }
+    this.getData()
   },
   updated () {
-    this.checkCurrentLogin()
+    this.getData()
   },
   computed: {
     ...mapGetters({ currentUser: 'currentUser' })
   },
   methods: {
-    checkCurrentLogin () {
-      axios.get('http://localhost:5000/doctor/dashboard', {headers: {'x-access-token': this.currentUser}}).then((res) => {
+    getData () {
+      axios.post('http://localhost:5000/doctor/getdata', '', {headers: {'x-access-token': this.doctor}}).then((res) => {
         if (res.status !== 200) {
-          this.$router.push('/doctor/login')
+          console.log(res.data.message)
+        } else {
+          this.name = res.data.message[0]
         }
-      }).catch(() => {
-        this.$router.push('/doctor/login')
+      }).catch((error) => {
+        console.log(error)
       })
     }
   }

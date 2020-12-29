@@ -6,7 +6,7 @@
   <nav id="sidebar" class="sidebar-wrapper">
     <div class="sidebar-content">
       <div class="sidebar-brand">
-        <a href="#">his</a>
+        <a href="#">his - patient</a>
       </div>
       <div class="sidebar-header">
         <div class="user-pic">
@@ -71,21 +71,10 @@ export default {
     if (this.currentPatient) {
       this.patient = this.currentPatient
     }
-    this.name = this.getData()
-    if (this.patient !== '') {
-      console.log(this.patient)
-      this.checkCurrentLogin()
-    } else {
-      this.$router.push('/patient/login')
-    }
+    this.getData()
   },
   updated () {
     this.getData()
-    if (this.patient !== '') {
-      this.checkCurrentLogin()
-    } else {
-      this.$router.push('/patient/login')
-    }
   },
   computed: {
     ...mapGetters({ currentPatient: 'currentPatient' })
@@ -100,15 +89,6 @@ export default {
         }
       }).catch((error) => {
         console.log(error)
-      })
-    },
-    checkCurrentLogin () {
-      axios.get('http://localhost:5000/patient/dashboard', {headers: {'x-access-token': this.patient}}).then((res) => {
-        if (res.status !== 200) {
-          this.$router.push('/patient/login')
-        }
-      }).catch(() => {
-        this.$router.push('/patient/login')
       })
     }
   }

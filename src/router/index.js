@@ -9,7 +9,7 @@ import DoctorLogout from '../components/Doctor/DoctorLogout'
 import PatientLogout from '../components/Patient/PatientLogout'
 import Logout from '@/components/Logout'
 import Index from '@/components/Index'
-import 'axios'
+import axios from 'axios'
 Vue.use(Router)
 
 const router = new Router({
@@ -21,10 +21,11 @@ const router = new Router({
     },
     {
       path: '/doctor/login',
-      component: DoctorLogin
+      component: DoctorLogin,
+      meta: { doctor: false, patient: false, drlogin: true, patientlogin: false }
     },
     {
-      path: '/doctor/logouot',
+      path: '/doctor/logout',
       component: DoctorLogout
     },
     {
@@ -33,7 +34,8 @@ const router = new Router({
     },
     {
       path: '/patient/login',
-      component: PatientLogin
+      component: PatientLogin,
+      meta: { doctor: false, patient: false, drlogin: false, patientlogin: true }
     },
     {
       path: '/patient/logout',
@@ -64,6 +66,22 @@ router.beforeEach((to, from, next) => {
     } else if (to.meta.patient) {
       if (!localStorage.patientToken) {
         next({ path: '/patient/login' })
+      } else next()
+    } else if (to.meta.drlogin) {
+      if (localStorage.token) {
+        axios.get('http://localhost:5000/doctor/dashboard', {headers: {'x-access-token': localStorage.token}}).then((res) => {
+          next({ path: '/doctor/dashboard' })
+        }).catch(() => {
+          next()
+        })
+      } else next()
+    } else if (to.meta.patientlogin) {
+      if (localStorage.patientToken) {
+        axios.get('http://localhost:5000/patient/dashboard', {headers: {'x-access-token': localStorage.patientToken}}).then((res) => {
+          next({ path: '/patient/dashboard' })
+        }).catch(() => {
+          next()
+        })
       } else next()
     }
   }

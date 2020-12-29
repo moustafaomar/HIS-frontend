@@ -3,10 +3,10 @@
 <script>
 import { mapGetters } from 'vuex'
 export default {
-  name: 'PatientLogout',
+  name: 'DoctorLogout',
   data () {
     return {
-      ...mapGetters({ currentPatient: 'currentPatient' })
+      ...mapGetters({ currentUser: 'currentUser' })
     }
   },
   created () {

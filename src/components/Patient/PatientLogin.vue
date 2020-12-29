@@ -39,21 +39,7 @@ export default {
   computed: {
     ...mapGetters({ currentPatient: 'currentPatient' })
   },
-  updated () {
-    if (this.token) {
-      this.checkCurrentLogin()
-    }
-  },
   methods: {
-    checkCurrentLogin () {
-      axios.get('http://localhost:5000/patient/dashboard', {headers: {'x-access-token': this.token}}).then((res) => {
-        if (res.status === 200) {
-          this.$router.push('/patient/dashboard')
-        }
-      }).catch(() => {
-        return false
-      })
-    },
     login () {
       axios.post('http://localhost:5000/patient/login', { 'SSN': this.ssn, 'password': this.password })
         .then((request) => {
