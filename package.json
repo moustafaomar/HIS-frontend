@@ -1,8 +1,8 @@
 {
-  "name": "bookstore-frontend",
+  "name": "HIS-frontend",
   "version": "1.0.0",
-  "description": "Frontend for Bookstore app",
-  "author": "Paweł J. Wal <p@steamshard.net>",
+  "description": "Frontend for HIs app",
+  "author": "Mostafa Omar",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
