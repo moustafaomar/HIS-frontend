@@ -8,23 +8,15 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import Navbar from '@/components/Navbar'
-import Foot from '@/components/Foot'
 
 export default {
   name: 'app',
   computed: {
     ...mapGetters(
     { currentUser: 'currentUser' },
-    { currentPatient: 'currentPatient' }
+    { currentPatient: 'currentPatient' },
+    { currentAdmin: 'currentAdmin' }
     )
-  },
-  components: {
-    Navbar,
-    Foot
   }
 }
 </script>
-
-<style>
-</style>

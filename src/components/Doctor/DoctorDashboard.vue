@@ -67,13 +67,8 @@ export default {
       doctor: ''
     }
   },
-  created () {
-    if (this.currentUser) {
-      this.doctor = this.currentUser
-    }
-    this.getData()
-  },
-  updated () {
+  mounted () {
+    this.doctor = this.currentUser
     this.getData()
   },
   computed: {

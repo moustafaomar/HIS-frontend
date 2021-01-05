@@ -1,19 +1,7 @@
-/* global localStorage */
-
-import * as MutationTypes from './mutation-types'
-
 const state = {
   user: localStorage.token,
-  patient: localStorage.patientToken
-}
-
-const mutations = {
-  [MutationTypes.LOGIN] (state) {
-    state.user = localStorage.token
-  },
-  [MutationTypes.LOGOUT] (state) {
-    state.user = null
-  }
+  patient: localStorage.patientToken,
+  admin: localStorage.adminToken
 }
 
 const getters = {
@@ -22,22 +10,13 @@ const getters = {
   },
   currentPatient (state) {
     return state.patient
-  }
-}
-
-const actions = {
-  login ({ commit }) {
-    commit(MutationTypes.LOGIN)
   },
-
-  logout ({ commit }) {
-    commit(MutationTypes.LOGOUT)
+  currentAdmin (state) {
+    return state.admin
   }
 }
 
 export default {
   state,
-  mutations,
-  getters,
-  actions
+  getters
 }

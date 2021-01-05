@@ -6,7 +6,7 @@
   <nav id="sidebar" class="sidebar-wrapper">
     <div class="sidebar-content">
       <div class="sidebar-brand">
-        <a href="#">his - patient</a>
+        <a href="#">his - admin</a>
       </div>
       <div class="sidebar-header">
         <div class="user-pic">
@@ -16,7 +16,7 @@
           <span class="user-name">
             <strong>{{this.name}}</strong>
           </span>
-          <span class="user-role">Patient</span>
+          <span class="user-role">Admin</span>
         </div>
       </div>
       <div class="sidebar-menu">
@@ -24,6 +24,7 @@
           <li class="header-menu">
             <span>General</span>
           </li>
+          <!--
           <li class="sidebar-dropdown">
             <a href="#">
               <i class="fa fa-stethoscope"></i>
@@ -31,6 +32,7 @@
               <span class="badge badge-pill badge-danger">{{this.noOfDoctors}}</span>
             </a>
           </li>
+          -->
         </ul>
       </div>
     </div>
@@ -38,7 +40,7 @@
   <!-- sidebar-wrapper  -->
   <main class="page-content">
     <div class="container">
-      <h2>Welcome, Jhon Smith</h2>
+      <h2>Welcome, {{name}}</h2>
       <hr>
       <div class="row">
         <div class="form-group col-md-12">
@@ -59,24 +61,22 @@
 import { mapGetters } from 'vuex'
 import axios from '../../axios'
 export default {
-  name: 'PatientDashboard',
+  name: 'AdminDashboard',
   data () {
     return {
-      name: '',
-      noOfDoctors: 0,
-      patient: ''
+      name: ''
     }
   },
   mounted () {
-    this.patient = this.currentPatient
+    this.admin = this.currentAdmin
     this.getData()
   },
   computed: {
-    ...mapGetters({ currentPatient: 'currentPatient' })
+    ...mapGetters({ currentAdmin: 'currentAdmin' })
   },
   methods: {
     getData () {
-      axios.post('http://localhost:5000/patient/getdata', '', {headers: {'x-access-token': this.patient}}).then((res) => {
+      axios.post('http://localhost:5000/admin/getdata', '', {headers: {'x-access-token': this.currentAdmin}}).then((res) => {
         if (res.status !== 200) {
           console.log(res.data.message)
         } else {

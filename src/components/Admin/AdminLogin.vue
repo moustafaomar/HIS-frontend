@@ -6,14 +6,13 @@
      <h2 class="card-title text-center">Login</h2>
       <div class="card-body py-md-4">
       <form class="form-signin" @submit.prevent="login">
-        <h2 class="form-signin-heading">Please sign in</h2>
+        <h2 class="form-signin-heading">Admins sign in</h2>
         <div class="alert alert-danger" v-if="error">{{ error }}</div>
-        <label for="SSN" class="sr-only">SSN</label>
-        <input v-model="ssn" type="text" id="SSN" class="form-control" placeholder="SSN" required autofocus>
+        <label for="username" class="sr-only">username</label>
+        <input v-model="username" type="text" id="username" class="form-control" placeholder="Username" required autofocus>
         <label for="inputPassword" class="sr-only">Password</label>
         <input v-model="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-        <a href="/doctor/signup">Don't have an account?</a>
       </form>
 </div>
   </div>
@@ -27,21 +26,29 @@ import { mapGetters } from 'vuex'
 import axios from '../../axios'
 
 export default {
-  name: 'DoctorLogin',
+  name: 'AdminLogin',
   data () {
     return {
-      ssn: '',
+      username: '',
       password: '',
-      error: false
+      error: false,
+      token: ''
     }
   },
   computed: {
-    ...mapGetters({ currentUser: 'currentUser' })
+    ...mapGetters({ currentAdmin: 'currentAdmin' })
   },
   methods: {
     login () {
-      axios.post('http://localhost:5000/doctor/login', { 'SSN': this.ssn, 'password': this.password })
-        .then(request => this.loginSuccessful(request))
+      axios.post('http://localhost:5000/admin/login', { 'username': this.username, 'password': this.password })
+        .then((request) => {
+          if (request.status === 200) {
+            console.log(request.data)
+            this.loginSuccessful(request)
+          } else {
+            console.log(request.status)
+          }
+        })
         .catch(() => this.loginFailed())
     },
     loginSuccessful (req) {
@@ -50,18 +57,17 @@ export default {
         return
       }
       this.error = false
-      localStorage.token = req.data.token
-      this.$store.dispatch('login')
-      this.$router.push('/doctor/dashboard')
+      localStorage.adminToken = req.data.token
+      this.$router.push('/admin/dashboard')
     },
     loginFailed () {
       this.error = 'Login failed!'
-      this.$store.dispatch('logout')
-      delete localStorage.token
+      delete localStorage.adminToken
     }
   }
 }
 </script>
+
 <style scoped>
 @import url('https://fonts.googleapis.com/css?family=PT+Sans');
 
