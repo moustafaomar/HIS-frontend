@@ -472,7 +472,7 @@ body {
 .page-wrapper .page-content {
   display: inline-block;
   width: 100%;
-  padding-left: 0px;
+  padding-left: 50%;
   padding-top: 20px;
 }
 

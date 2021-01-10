@@ -6,7 +6,7 @@
   <nav id="sidebar" class="sidebar-wrapper">
     <div class="sidebar-content">
       <div class="sidebar-brand">
-        <a href="#">his - admin</a>
+        <a href="#">his - patient</a>
       </div>
       <div class="sidebar-header">
         <div class="user-pic">
@@ -14,27 +14,31 @@
         </div>
         <div class="user-info">
           <span class="user-name">
-            <strong>{{this.adminName}}</strong>
+            <strong>{{this.name}}</strong>
           </span>
-          <span class="user-role">Admin</span>
+          <span class="user-role">Patient</span>
         </div>
       </div>
       <div class="sidebar-menu">
         <ul>
-          <a href="/admin/dashboard">
           <li class="header-menu">
-            <span>Home</span>
+            <span>General</span>
           </li>
-          </a>
+          <li class="sidebar-dropdown">
+            <a href="#">
+              <i class="fa fa-stethoscope"></i>
+              <span>Doctors</span>
+              <span class="badge badge-pill badge-danger">{{this.noOfDoctors}}</span>
+            </a>
+          </li>
           <ul>
-              <a href="/admin/doctor/create"><li class="header-menu"><span>Create Doctor</span></li></a>
-              <a href="/admin/viewLinked"><li class="header-menu"><span>View Doctors and patients</span></li></a>
+              <li class="header-menu" v-for="doc in docNames" :key="doc[1]">
+                <a :href="'/patient/doctor/'+doc[1]"><span>{{doc[0]}}</span></a>
+              </li>
           </ul>
-          <a href="/admin/logout">
           <li class="header-menu">
-            <span>Logout</span>
+            <a href="/patient/logout">Logout</a>
           </li>
-          </a>
         </ul>
       </div>
     </div>
@@ -42,15 +46,21 @@
   <!-- sidebar-wrapper  -->
   <main class="page-content">
     <div class="container">
-      <form class="form-signin" @submit.prevent="create">
-        <h2 class="form-signin-heading">Create Relation</h2>
-        <div class="alert alert-danger" v-if="error">{{ error }}</div>
-        <label for="DSSN" class="sr-only">Doctor SSN</label>
-        <input v-model="DSSN" type="text" id="DSSN" class="form-control" placeholder="Doctor SSN" required autofocus>
-        <label for="PSSN" class="sr-only">Patient SSN</label>
-        <input v-model="PSSN" type="text" id="PSSN" class="form-control" placeholder="Patient SSN" required autofocus>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Create</button>
-      </form>
+      <h2>Welcome, {{this.name}}</h2>
+      <hr>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <form enctype="multipart/form-data" class="form-signin" @submit.prevent="upload">
+            <h2 class="form-signin-heading">Upload file</h2>
+            <div class="alert alert-danger" v-if="error">{{ error }}</div>
+            <input @change="FileChanged($event)" type="file" class="form-control" required />
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Upload</button>
+          </form>
+        </div>
+      </div>
+      <hr>
+
+
     </div>
 
   </main>
@@ -60,35 +70,46 @@
 <script>
 import { mapGetters } from 'vuex'
 import axios from '../../axios'
-
 export default {
-  name: 'Relate',
+  name: 'PatientUpload',
   data () {
     return {
-      PSSN: '',
-      DSSN: '',
-      error: false,
-      admin: '',
-      adminName: ''
+      name: '',
+      noOfDoctors: 0,
+      docNames: [],
+      patient: '',
+      file: null,
+      error: ''
     }
   },
-  computed: {
-    ...mapGetters({ currentAdmin: 'currentAdmin' })
-  },
   mounted () {
-    this.admin = this.currentAdmin
+    this.patient = this.currentPatient
     this.getData()
   },
+  computed: {
+    ...mapGetters({ currentPatient: 'currentPatient' })
+  },
   methods: {
-    create () {
-      axios.post('http://localhost:5000/admin/relate', { 'did': this.DSSN, 'pid': this.PSSN }, {headers: {'x-access-token': this.currentAdmin}})
+    upload () {
+      var link = 'http://localhost:5000/patient/' + this.$route.params.pid + '/' + this.$route.params.did
+      let formData = new FormData()
+      formData.append('file', this.file)
+      axios.post(link, formData, {headers: {'x-access-token': this.patient}}).then((res) => {
+        console.log(res)
+      })
+    },
+    FileChanged (event) {
+      this.file = event.target.files[0]
     },
     async getData () {
-      await axios.post('http://localhost:5000/admin/getdata', '', {headers: {'x-access-token': this.currentAdmin}}).then((res) => {
+      await axios.post('http://localhost:5000/patient/getdata', '', {headers: {'x-access-token': this.patient}}).then((res) => {
         if (res.status !== 200) {
           console.log(res.data.message)
         } else {
-          this.adminName = res.data.message[0]
+          this.name = res.data.message[0]
+          this.noOfDoctors = res.data.message[1]
+          this.docNames = res.data.message[2]
+          console.log(this.docNames[0])
         }
       }).catch((error) => {
         console.log(error)
@@ -97,9 +118,7 @@ export default {
   }
 }
 </script>
-
 <style scoped>
-@import url('https://fonts.googleapis.com/css?family=PT+Sans');
 @keyframes swing {
   0% {
     transform: rotate(0deg);
@@ -580,38 +599,5 @@ body {
 .chiller-theme .sidebar-footer>a:last-child {
     border-right: none;
 }
-body{
-  background: #fff;
-  font-family: 'PT Sans', sans-serif;
-}
-h2{
-  padding-top: 1.5rem;
-}
-a{
-  color: #333;
-}
-a:hover{
-  color: #da5767;
-  text-decoration: none;
-}
-.card{
-  border: 0.40rem solid #f8f9fa;
-  top: 10%;
-}
-.form-control{
-  background-color: #f8f9fa;
-  padding: 20px;
-  padding: 25px 15px;
-  margin-bottom: 1.3rem;
-}
 
-.form-control:focus {
-
-    color: #000000;
-    background-color: #ffffff;
-    border: 3px solid #da5767;
-    outline: 0;
-    box-shadow: none;
-
-}
 </style>

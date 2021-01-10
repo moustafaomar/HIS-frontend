@@ -6,7 +6,7 @@
   <nav id="sidebar" class="sidebar-wrapper">
     <div class="sidebar-content">
       <div class="sidebar-brand">
-        <a href="#">his - admin</a>
+        <a href="#">his - doctor</a>
       </div>
       <div class="sidebar-header">
         <div class="user-pic">
@@ -14,27 +14,31 @@
         </div>
         <div class="user-info">
           <span class="user-name">
-            <strong>{{this.adminName}}</strong>
+            <strong>{{this.name}}</strong>
           </span>
-          <span class="user-role">Admin</span>
+          <span class="user-role">Doctor</span>
         </div>
       </div>
       <div class="sidebar-menu">
         <ul>
-          <a href="/admin/dashboard">
           <li class="header-menu">
-            <span>Home</span>
+            <span>General</span>
           </li>
-          </a>
+          <li class="sidebar-dropdown">
+            <a href="#">
+              <i class="fa fa-stethoscope"></i>
+              <span>Patients</span>
+              <span class="badge badge-pill badge-danger">{{this.noOfPatients}}</span>
+            </a>
+          </li>
           <ul>
-              <a href="/admin/doctor/create"><li class="header-menu"><span>Create Doctor</span></li></a>
-              <a href="/admin/viewLinked"><li class="header-menu"><span>View Doctors and patients</span></li></a>
+              <li class="header-menu" v-for="pat in patients" :key="pat[1]">
+                <a :href="'/doctor/'+did+'/'+pat[1]"><span>{{pat[0]}}</span></a>
+              </li>
           </ul>
-          <a href="/admin/logout">
           <li class="header-menu">
-            <span>Logout</span>
+            <a href="/doctor/logout">Logout</a>
           </li>
-          </a>
         </ul>
       </div>
     </div>
@@ -42,64 +46,72 @@
   <!-- sidebar-wrapper  -->
   <main class="page-content">
     <div class="container">
-      <form class="form-signin" @submit.prevent="create">
-        <h2 class="form-signin-heading">Create Relation</h2>
-        <div class="alert alert-danger" v-if="error">{{ error }}</div>
-        <label for="DSSN" class="sr-only">Doctor SSN</label>
-        <input v-model="DSSN" type="text" id="DSSN" class="form-control" placeholder="Doctor SSN" required autofocus>
-        <label for="PSSN" class="sr-only">Patient SSN</label>
-        <input v-model="PSSN" type="text" id="PSSN" class="form-control" placeholder="Patient SSN" required autofocus>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Create</button>
-      </form>
+      <h2>HIS - Doctor</h2>
+      <hr>
+      <div class="container">
+        <div class="row">
+          <ul>
+            <li v-for="file in files" :key="file">
+              File Name: {{file[1]}}
+              <hr>
+              File URL: {{file[0]}}
+              <br>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <hr>
     </div>
 
   </main>
   <!-- page-content" -->
 </div>
+<!-- page-wrapper -->
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import axios from '../../axios'
-
 export default {
-  name: 'Relate',
+  name: 'DoctorFiles',
   data () {
     return {
-      PSSN: '',
-      DSSN: '',
-      error: false,
-      admin: '',
-      adminName: ''
+      did: this.$route.params.did,
+      pid: this.$route.params.pid,
+      patients: [],
+      noOfPatients: 0,
+      files: [],
+      name: '',
+      doctor: ''
     }
   },
-  computed: {
-    ...mapGetters({ currentAdmin: 'currentAdmin' })
-  },
   mounted () {
-    this.admin = this.currentAdmin
+    this.doctor = this.currentUser
     this.getData()
   },
+  computed: {
+    ...mapGetters({ currentUser: 'currentUser' })
+  },
   methods: {
-    create () {
-      axios.post('http://localhost:5000/admin/relate', { 'did': this.DSSN, 'pid': this.PSSN }, {headers: {'x-access-token': this.currentAdmin}})
-    },
     async getData () {
-      await axios.post('http://localhost:5000/admin/getdata', '', {headers: {'x-access-token': this.currentAdmin}}).then((res) => {
+      await axios.post('http://localhost:5000/doctor/getdata', '', {headers: {'x-access-token': this.doctor}}).then((res) => {
         if (res.status !== 200) {
           console.log(res.data.message)
         } else {
-          this.adminName = res.data.message[0]
+          this.name = res.data.message[0]
+          this.noOfPatients = res.data.message[3]
+          this.patients = res.data.message[4]
         }
       }).catch((error) => {
         console.log(error)
+      })
+      await axios.post('http://localhost:5000/doctor/getfiles/' + this.pid, '', {headers: {'x-access-token': this.doctor}}).then((res) => {
+        this.files = res.data.message[0]
       })
     }
   }
 }
 </script>
-
 <style scoped>
-@import url('https://fonts.googleapis.com/css?family=PT+Sans');
 @keyframes swing {
   0% {
     transform: rotate(0deg);
@@ -580,38 +592,5 @@ body {
 .chiller-theme .sidebar-footer>a:last-child {
     border-right: none;
 }
-body{
-  background: #fff;
-  font-family: 'PT Sans', sans-serif;
-}
-h2{
-  padding-top: 1.5rem;
-}
-a{
-  color: #333;
-}
-a:hover{
-  color: #da5767;
-  text-decoration: none;
-}
-.card{
-  border: 0.40rem solid #f8f9fa;
-  top: 10%;
-}
-.form-control{
-  background-color: #f8f9fa;
-  padding: 20px;
-  padding: 25px 15px;
-  margin-bottom: 1.3rem;
-}
 
-.form-control:focus {
-
-    color: #000000;
-    background-color: #ffffff;
-    border: 3px solid #da5767;
-    outline: 0;
-    box-shadow: none;
-
-}
 </style>

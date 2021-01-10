@@ -33,9 +33,12 @@
           </li>
           <ul>
               <li class="header-menu" v-for="doc in docNames" :key="doc[1]">
-                <a :href="'/patient/doctor/'+doc[1]"><span>{{doc[0]}}</span></a>
+                <a :href="'/patient/'+pid+'/'+doc[1]"><span>{{doc[0]}}</span></a>
               </li>
           </ul>
+          <li class="header-menu">
+            <a href="/patient/logout">Logout</a>
+          </li>
         </ul>
       </div>
     </div>
@@ -43,7 +46,7 @@
   <!-- sidebar-wrapper  -->
   <main class="page-content">
     <div class="container">
-      <h2>Welcome, Jhon Smith</h2>
+      <h2>Welcome, {{this.name}}</h2>
       <hr>
       <div class="row">
         <div class="form-group col-md-12">
@@ -70,7 +73,8 @@ export default {
       name: '',
       noOfDoctors: 0,
       docNames: [],
-      patient: ''
+      patient: '',
+      pid: JSON.parse(atob(localStorage.patientToken.split('.')[1])).user
     }
   },
   mounted () {
@@ -454,7 +458,7 @@ body {
 .page-wrapper .page-content {
   display: inline-block;
   width: 100%;
-  padding-left: 0px;
+  padding-left: 50%;
   padding-top: 20px;
 }
 

@@ -45,7 +45,6 @@
     <div class="container">
       <form class="form-signin" @submit.prevent="create">
         <h2 class="form-signin-heading">Create New Admin</h2>
-        <div class="alert alert-danger" v-if="error">{{ error }}</div>
         <label for="username" class="sr-only">Username</label>
         <input v-model="username" type="text" id="username" class="form-control" placeholder="Username" required autofocus>
         <label for="inputPassword" class="sr-only">Password</label>
@@ -82,7 +81,7 @@ export default {
   },
   methods: {
     create () {
-      axios.post('http://localhost:5000/admin/create', { 'username': this.username,'password': this.password }, {headers: {'x-access-token': this.currentAdmin}})
+      axios.post('http://localhost:5000/admin/register', { 'username': this.username, 'password': this.password }, {headers: {'x-access-token': this.currentAdmin}})
         .then((request) => {
           if (request.status === 200) {
             console.log(request.data)
@@ -465,7 +464,7 @@ body {
 .page-wrapper .page-content {
   display: inline-block;
   width: 100%;
-  padding-left: 0px;
+  padding-left: 50%;
   padding-top: 20px;
 }
 

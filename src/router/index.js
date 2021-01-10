@@ -5,14 +5,18 @@ import DoctorLogin from '../components/Doctor/DoctorLogin'
 import PatientLogin from '../components/Patient/PatientLogin'
 import PatientDashboard from '../components/Patient/PatientDashboard'
 import PatientSignup from '../components/Patient/PatientSignup'
+import PatientUpload from '../components/Patient/PatientUpload'
 import DoctorLogout from '../components/Doctor/DoctorLogout'
 import DoctorCalendar from '../components/Doctor/DoctorCalendar'
+import DoctorFiles from '../components/Doctor/DoctorFiles'
 import PatientLogout from '../components/Patient/PatientLogout'
 import AdminLogin from '../components/Admin/AdminLogin'
 import AdminLogout from '../components/Admin/AdminLogout'
 import AdminDashboard from '../components/Admin/AdminDashboard'
 import CreateDoctor from '../components/Admin/CreateDoctor'
 import ViewLinked from '../components/Admin/ViewLinked'
+import Relate from '../components/Admin/Relate'
+import CreateAdmin from '../components/Admin/CreateAdmin'
 import Index from '@/components/Index'
 import axios from 'axios'
 Vue.use(Router)
@@ -52,6 +56,11 @@ const router = new Router({
       meta: { doctor: true, patient: false, admin: false }
     },
     {
+      path: '/doctor/:did/:pid',
+      component: DoctorFiles,
+      meta: { doctor: true, patient: false, admin: false }
+    },
+    {
       path: '/doctor/calendar',
       component: DoctorCalendar,
       meta: { doctor: true, patient: false, admin: false }
@@ -59,6 +68,11 @@ const router = new Router({
     {
       path: '/patient/dashboard',
       component: PatientDashboard,
+      meta: { patient: true, doctor: false, admin: false }
+    },
+    {
+      path: '/patient/:pid/:did',
+      component: PatientUpload,
       meta: { patient: true, doctor: false, admin: false }
     },
     {
@@ -77,8 +91,18 @@ const router = new Router({
       meta: { doctor: false, patient: false, admin: true }
     },
     {
+      path: '/admin/createAdmin',
+      component: CreateAdmin,
+      meta: { doctor: false, patient: false, admin: true }
+    },
+    {
       path: '/admin/viewLinked',
       component: ViewLinked,
+      meta: { doctor: false, patient: false, admin: true }
+    },
+    {
+      path: '/admin/relate',
+      component: Relate,
       meta: { doctor: false, patient: false, admin: true }
     },
     {
@@ -121,7 +145,7 @@ router.beforeEach(async(to, from, next) => {
       }
     } else if (to.meta.drlogin) {
       if (localStorage.token) {
-        axios.get('http://localhost:5000/doctor/dashboard', {headers: {'x-access-token': localStorage.token}}).then((res) => {
+        await axios.get('http://localhost:5000/doctor/dashboard', {headers: {'x-access-token': localStorage.token}}).then((res) => {
           next({ path: '/doctor/dashboard' })
         }).catch(() => {
           next()
@@ -129,7 +153,7 @@ router.beforeEach(async(to, from, next) => {
       } else next()
     } else if (to.meta.patientlogin) {
       if (localStorage.patientToken) {
-        axios.get('http://localhost:5000/patient/dashboard', {headers: {'x-access-token': localStorage.patientToken}}).then((res) => {
+        await axios.get('http://localhost:5000/patient/dashboard', {headers: {'x-access-token': localStorage.patientToken}}).then((res) => {
           next({ path: '/patient/dashboard' })
         }).catch(() => {
           next()
@@ -137,7 +161,7 @@ router.beforeEach(async(to, from, next) => {
       } else next()
     } else if (to.meta.adminlogin) {
       if (localStorage.adminToken) {
-        axios.get('http://localhost:5000/admin/dashboard', {headers: {'x-access-token': localStorage.adminToken}}).then((res) => {
+        await axios.get('http://localhost:5000/admin/dashboard', {headers: {'x-access-token': localStorage.adminToken}}).then((res) => {
           next({ path: '/admin/dashboard' })
         }).catch(() => {
           next()

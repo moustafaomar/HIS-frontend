@@ -29,6 +29,8 @@
           <ul>
               <a href="/admin/doctor/create"><li class="header-menu"><span>Create Doctor</span></li></a>
               <a href="/admin/viewLinked"><li class="header-menu"><span>View Doctors and patients</span></li></a>
+              <a href="/admin/relate"><li class="header-menu"><span>Relate Doctor and patient</span></li></a>
+              <a href="/admin/createAdmin"><li class="header-menu"><span>Create Admin</span></li></a>
           </ul>
           <a href="/admin/logout">
           <li class="header-menu">
@@ -46,8 +48,8 @@
       <hr>
       <div class="row">
         <div class="form-group col-md-12">
-          <p>This is your home page.</p>
-          <p>You can view your Doctors' times as well as send your doctors results you receive from external labs.</p>
+          <p>We have a total of {{this.stats[0]}} patients</p>
+          <p>We have a total of {{this.stats[1]}} doctors</p>
         </div>
       </div>
       <hr>
@@ -66,7 +68,8 @@ export default {
   name: 'AdminDashboard',
   data () {
     return {
-      name: ''
+      name: '',
+      stats: []
     }
   },
   mounted () {
@@ -86,6 +89,9 @@ export default {
         }
       }).catch((error) => {
         console.log(error)
+      })
+      await axios.post('http://localhost:5000/admin/getstats', '', {headers: {'x-access-token': this.currentAdmin}}).then((res) => {
+        this.stats = res.data.message
       })
     }
   }
@@ -447,7 +453,7 @@ body {
 .page-wrapper .page-content {
   display: inline-block;
   width: 100%;
-  padding-left: 0px;
+  padding-left: 50%;
   padding-top: 20px;
 }
 

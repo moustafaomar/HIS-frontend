@@ -13,7 +13,6 @@
         <label for="inputPassword" class="sr-only">Password</label>
         <input v-model="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-        <a href="/doctor/signup">Don't have an account?</a>
       </form>
 </div>
   </div>

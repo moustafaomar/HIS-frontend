@@ -31,6 +31,17 @@
               <span class="badge badge-pill badge-danger">{{this.noOfPatients}}</span>
             </a>
           </li>
+          <ul>
+              <li class="header-menu" v-for="pat in patients" :key="pat[1]">
+                <a :href="'/doctor/'+did+'/'+pat[1]"><span>{{pat[0]}}</span></a>
+              </li>
+          </ul>
+          <li class="header-menu">
+            <a href="/doctor/logout">Logout</a>
+          </li>
+          <li class="header-menu">
+            <a href="/doctor/logout">Logout</a>
+          </li>
         </ul>
       </div>
     </div>
@@ -60,6 +71,8 @@ export default {
   name: 'DoctorCalendar',
   data () {
     return {
+      did: JSON.parse(atob(localStorage.token.split('.')[1])).user,
+      patients: [],
       noOfPatients: 0,
       sttime: '',
       endtime: '',
@@ -90,8 +103,8 @@ export default {
     ...mapGetters({ currentUser: 'currentUser' })
   },
   methods: {
-    setup () {
-      window.gapi.client.init({
+    async setup () {
+      await window.gapi.client.init({
         apiKey: this.API_KEY,
         clientId: this.CLIENT_ID,
         discoveryDocs: this.DISCOVERY_DOCS,
@@ -133,6 +146,8 @@ export default {
           this.name = res.data.message[0]
           this.sttime = res.data.message[1]
           this.endtime = res.data.message[2]
+          this.noOfPatients = res.data.message[3]
+          this.patients = res.data.message[4]
         }
       }).catch((error) => {
         console.log(error)
@@ -497,7 +512,7 @@ body {
 .page-wrapper .page-content {
   display: inline-block;
   width: 100%;
-  padding-left: 0px;
+  padding-left: 50%;
   padding-top: 20px;
 }
 
