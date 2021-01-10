@@ -6,7 +6,7 @@
   <nav id="sidebar" class="sidebar-wrapper">
     <div class="sidebar-content">
       <div class="sidebar-brand">
-        <a href="#">his - admin</a>
+        <a href="#">his - doctor</a>
       </div>
       <div class="sidebar-header">
         <div class="user-pic">
@@ -16,25 +16,21 @@
           <span class="user-name">
             <strong>{{this.name}}</strong>
           </span>
-          <span class="user-role">Admin</span>
+          <span class="user-role">Doctor</span>
         </div>
       </div>
       <div class="sidebar-menu">
         <ul>
-          <a href="/admin/dashboard">
           <li class="header-menu">
-            <span>Home</span>
+            <span>General</span>
           </li>
-          </a>
-          <ul>
-              <a href="/admin/doctor/create"><li class="header-menu"><span>Create Doctor</span></li></a>
-              <a href="/admin/viewLinked"><li class="header-menu"><span>View Doctors and patients</span></li></a>
-          </ul>
-          <a href="/admin/logout">
-          <li class="header-menu">
-            <span>Logout</span>
+          <li class="sidebar-dropdown">
+            <a href="#">
+              <i class="fa fa-stethoscope"></i>
+              <span>Patients</span>
+              <span class="badge badge-pill badge-danger">{{this.noOfPatients}}</span>
+            </a>
           </li>
-          </a>
         </ul>
       </div>
     </div>
@@ -42,47 +38,101 @@
   <!-- sidebar-wrapper  -->
   <main class="page-content">
     <div class="container">
-      <h2>Welcome, {{name}}</h2>
+      <h2>HIS - Doctor</h2>
       <hr>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <p>This is your home page.</p>
-          <p>You can view your Doctors' times as well as send your doctors results you receive from external labs.</p>
+      <div class="container">
+        <div class="row">
+          <button class="btn btn-success" @click="calendar">Save to calendar</button>
         </div>
       </div>
       <hr>
-
-
     </div>
 
   </main>
   <!-- page-content" -->
 </div>
+<!-- page-wrapper -->
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import axios from '../../axios'
 export default {
-  name: 'AdminDashboard',
+  name: 'DoctorCalendar',
   data () {
     return {
-      name: ''
+      noOfPatients: 0,
+      sttime: '',
+      endtime: '',
+      name: '',
+      doctor: '',
+      authorized: false,
+      CLIENT_ID: '73494404649-gebipd261piu7cevvhd9spg1ug5blpju.apps.googleusercontent.com',
+      API_KEY: 'AIzaSyAM6u6dVmcjRsBcoBNFCl7AT36-9piliXI',
+      DISCOVERY_DOCS: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
+      SCOPES: 'https://www.googleapis.com/auth/calendar.events'
     }
   },
+  created () {
+    let gapi = document.createElement('script')
+    gapi.setAttribute('src', '//apis.google.com/js/api.js')
+    gapi.async = true
+    gapi.defer = true
+    gapi.onload = 'this.onload=function(){};handleClientLoad()'
+    const meta = document.createElement('meta')
+    meta.name = 'google-signin-client_id'
+    document.head.appendChild(gapi)
+  },
   mounted () {
-    this.admin = this.currentAdmin
+    this.doctor = this.currentUser
     this.getData()
   },
   computed: {
-    ...mapGetters({ currentAdmin: 'currentAdmin' })
+    ...mapGetters({ currentUser: 'currentUser' })
   },
   methods: {
+    setup () {
+      window.gapi.client.init({
+        apiKey: this.API_KEY,
+        clientId: this.CLIENT_ID,
+        discoveryDocs: this.DISCOVERY_DOCS,
+        scope: this.SCOPES
+      })
+    },
+    calendar () {
+      window.gapi.load('client:auth2', this.setup)
+      window.gapi.auth2.getAuthInstance().signIn()
+      this.createEvent()
+    },
+    createEvent () {
+      if (window.gapi.auth2.getAuthInstance().isSignedIn.get()) {
+        var resource = {
+          'summary': 'Test',
+          'location': '800 Howard St., San Francisco, CA 94103',
+          'description': 'Test',
+          'start': {
+            'dateTime': this.sttime,
+            'timeZone': 'America/Los_Angeles'
+          },
+          'end': {
+            'dateTime': this.endtime,
+            'timeZone': 'America/Los_Angeles'
+          }
+        }
+        var request = window.gapi.client.calendar.events.insert({
+          'calendarId': 'primary',
+          'resource': resource
+        })
+        request.execute()
+      }
+    },
     async getData () {
-      await axios.post('http://localhost:5000/admin/getdata', '', {headers: {'x-access-token': this.currentAdmin}}).then((res) => {
+      await axios.post('http://localhost:5000/doctor/getdata', '', {headers: {'x-access-token': this.doctor}}).then((res) => {
         if (res.status !== 200) {
           console.log(res.data.message)
         } else {
           this.name = res.data.message[0]
+          this.sttime = res.data.message[1]
+          this.endtime = res.data.message[2]
         }
       }).catch((error) => {
         console.log(error)

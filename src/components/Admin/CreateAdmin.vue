@@ -14,7 +14,7 @@
         </div>
         <div class="user-info">
           <span class="user-name">
-            <strong>{{this.name}}</strong>
+            <strong>{{this.adminName}}</strong>
           </span>
           <span class="user-role">Admin</span>
         </div>
@@ -28,6 +28,7 @@
           </a>
           <ul>
               <a href="/admin/doctor/create"><li class="header-menu"><span>Create Doctor</span></li></a>
+              <a href="/admin/create"><li class="header-menu"><span>Create Admin</span></li></a>
               <a href="/admin/viewLinked"><li class="header-menu"><span>View Doctors and patients</span></li></a>
           </ul>
           <a href="/admin/logout">
@@ -42,17 +43,15 @@
   <!-- sidebar-wrapper  -->
   <main class="page-content">
     <div class="container">
-      <h2>Welcome, {{name}}</h2>
-      <hr>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <p>This is your home page.</p>
-          <p>You can view your Doctors' times as well as send your doctors results you receive from external labs.</p>
-        </div>
-      </div>
-      <hr>
-
-
+      <form class="form-signin" @submit.prevent="create">
+        <h2 class="form-signin-heading">Create New Admin</h2>
+        <div class="alert alert-danger" v-if="error">{{ error }}</div>
+        <label for="username" class="sr-only">Username</label>
+        <input v-model="username" type="text" id="username" class="form-control" placeholder="Username" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input v-model="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Create Admin</button>
+      </form>
     </div>
 
   </main>
@@ -62,27 +61,44 @@
 <script>
 import { mapGetters } from 'vuex'
 import axios from '../../axios'
+
 export default {
-  name: 'AdminDashboard',
+  name: 'CreateAdmin',
   data () {
     return {
-      name: ''
+      username: '',
+      password: '',
+      token: '',
+      admin: '',
+      adminName: ''
     }
+  },
+  computed: {
+    ...mapGetters({ currentAdmin: 'currentAdmin' })
   },
   mounted () {
     this.admin = this.currentAdmin
     this.getData()
   },
-  computed: {
-    ...mapGetters({ currentAdmin: 'currentAdmin' })
-  },
   methods: {
+    create () {
+      axios.post('http://localhost:5000/admin/create', { 'username': this.username,'password': this.password }, {headers: {'x-access-token': this.currentAdmin}})
+        .then((request) => {
+          if (request.status === 200) {
+            console.log(request.data)
+            this.$router.push('/admin/dashboard')
+          } else {
+            console.log(request.status)
+          }
+        })
+        .catch()
+    },
     async getData () {
       await axios.post('http://localhost:5000/admin/getdata', '', {headers: {'x-access-token': this.currentAdmin}}).then((res) => {
         if (res.status !== 200) {
           console.log(res.data.message)
         } else {
-          this.name = res.data.message[0]
+          this.adminName = res.data.message[0]
         }
       }).catch((error) => {
         console.log(error)
@@ -91,7 +107,9 @@ export default {
   }
 }
 </script>
+
 <style scoped>
+@import url('https://fonts.googleapis.com/css?family=PT+Sans');
 @keyframes swing {
   0% {
     transform: rotate(0deg);
@@ -572,5 +590,38 @@ body {
 .chiller-theme .sidebar-footer>a:last-child {
     border-right: none;
 }
+body{
+  background: #fff;
+  font-family: 'PT Sans', sans-serif;
+}
+h2{
+  padding-top: 1.5rem;
+}
+a{
+  color: #333;
+}
+a:hover{
+  color: #da5767;
+  text-decoration: none;
+}
+.card{
+  border: 0.40rem solid #f8f9fa;
+  top: 10%;
+}
+.form-control{
+  background-color: #f8f9fa;
+  padding: 20px;
+  padding: 25px 15px;
+  margin-bottom: 1.3rem;
+}
 
+.form-control:focus {
+
+    color: #000000;
+    background-color: #ffffff;
+    border: 3px solid #da5767;
+    outline: 0;
+    box-shadow: none;
+
+}
 </style>

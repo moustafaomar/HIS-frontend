@@ -31,6 +31,11 @@
               <span class="badge badge-pill badge-danger">{{this.noOfDoctors}}</span>
             </a>
           </li>
+          <ul>
+              <li class="header-menu" v-for="doc in docNames" :key="doc[1]">
+                <a :href="'/patient/doctor/'+doc[1]"><span>{{doc[0]}}</span></a>
+              </li>
+          </ul>
         </ul>
       </div>
     </div>
@@ -64,6 +69,7 @@ export default {
     return {
       name: '',
       noOfDoctors: 0,
+      docNames: [],
       patient: ''
     }
   },
@@ -75,12 +81,15 @@ export default {
     ...mapGetters({ currentPatient: 'currentPatient' })
   },
   methods: {
-    getData () {
-      axios.post('http://localhost:5000/patient/getdata', '', {headers: {'x-access-token': this.patient}}).then((res) => {
+    async getData () {
+      await axios.post('http://localhost:5000/patient/getdata', '', {headers: {'x-access-token': this.patient}}).then((res) => {
         if (res.status !== 200) {
           console.log(res.data.message)
         } else {
           this.name = res.data.message[0]
+          this.noOfDoctors = res.data.message[1]
+          this.docNames = res.data.message[2]
+          console.log(this.docNames[0])
         }
       }).catch((error) => {
         console.log(error)

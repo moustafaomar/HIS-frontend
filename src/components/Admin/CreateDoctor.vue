@@ -14,7 +14,7 @@
         </div>
         <div class="user-info">
           <span class="user-name">
-            <strong>{{this.name}}</strong>
+            <strong>{{this.adminName}}</strong>
           </span>
           <span class="user-role">Admin</span>
         </div>
@@ -42,17 +42,25 @@
   <!-- sidebar-wrapper  -->
   <main class="page-content">
     <div class="container">
-      <h2>Welcome, {{name}}</h2>
-      <hr>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <p>This is your home page.</p>
-          <p>You can view your Doctors' times as well as send your doctors results you receive from external labs.</p>
-        </div>
-      </div>
-      <hr>
-
-
+      <form class="form-signin" @submit.prevent="create">
+        <h2 class="form-signin-heading">Create New Doctor</h2>
+        <div class="alert alert-danger" v-if="error">{{ error }}</div>
+        <label for="SSN" class="sr-only">SSN</label>
+        <input v-model="SSN" type="text" id="SSN" class="form-control" placeholder="SSN" required autofocus>
+        <label for="name" class="sr-only">Name</label>
+        <input v-model="name" type="text" id="name" class="form-control" placeholder="Name" required autofocus>
+        <label for="email" class="sr-only">Email</label>
+        <input v-model="email" type="email" id="email" class="form-control" placeholder="Email" required autofocus>
+        <label for="phone" class="sr-only">Phone</label>
+        <input v-model="phone" type="text" id="phone" class="form-control" placeholder="Phone" required autofocus>
+        <label for="sttime" class="sr-only">Start Time</label>
+        <input v-model="sttime" type="text" id="sttime" class="form-control" placeholder="Start Time" required autofocus>
+        <label for="endtime" class="sr-only">End Time</label>
+        <input v-model="endtime" type="text" id="endtime" class="form-control" placeholder="End Time" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input v-model="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Create Doctor</button>
+      </form>
     </div>
 
   </main>
@@ -62,27 +70,50 @@
 <script>
 import { mapGetters } from 'vuex'
 import axios from '../../axios'
+
 export default {
-  name: 'AdminDashboard',
+  name: 'CreateDoctor',
   data () {
     return {
-      name: ''
+      SSN: '',
+      password: '',
+      name: '',
+      email: '',
+      sttime: '',
+      endtime: '',
+      phone: '',
+      error: false,
+      token: '',
+      admin: '',
+      adminName: ''
     }
+  },
+  computed: {
+    ...mapGetters({ currentAdmin: 'currentAdmin' })
   },
   mounted () {
     this.admin = this.currentAdmin
     this.getData()
   },
-  computed: {
-    ...mapGetters({ currentAdmin: 'currentAdmin' })
-  },
   methods: {
+    create () {
+      axios.post('http://localhost:5000/admin/doctor/create', { 'SSN': this.SSN, 'Name': this.name, 'email': this.email, 'phone': this.phone, 'start_hour': this.sttime, 'end_hour': this.endtime, 'password': this.password }, {headers: {'x-access-token': this.currentAdmin}})
+        .then((request) => {
+          if (request.status === 200) {
+            console.log(request.data)
+            this.$router.push('/admin/dashboard')
+          } else {
+            console.log(request.status)
+          }
+        })
+        .catch()
+    },
     async getData () {
       await axios.post('http://localhost:5000/admin/getdata', '', {headers: {'x-access-token': this.currentAdmin}}).then((res) => {
         if (res.status !== 200) {
           console.log(res.data.message)
         } else {
-          this.name = res.data.message[0]
+          this.adminName = res.data.message[0]
         }
       }).catch((error) => {
         console.log(error)
@@ -91,7 +122,9 @@ export default {
   }
 }
 </script>
+
 <style scoped>
+@import url('https://fonts.googleapis.com/css?family=PT+Sans');
 @keyframes swing {
   0% {
     transform: rotate(0deg);
@@ -572,5 +605,38 @@ body {
 .chiller-theme .sidebar-footer>a:last-child {
     border-right: none;
 }
+body{
+  background: #fff;
+  font-family: 'PT Sans', sans-serif;
+}
+h2{
+  padding-top: 1.5rem;
+}
+a{
+  color: #333;
+}
+a:hover{
+  color: #da5767;
+  text-decoration: none;
+}
+.card{
+  border: 0.40rem solid #f8f9fa;
+  top: 10%;
+}
+.form-control{
+  background-color: #f8f9fa;
+  padding: 20px;
+  padding: 25px 15px;
+  margin-bottom: 1.3rem;
+}
 
+.form-control:focus {
+
+    color: #000000;
+    background-color: #ffffff;
+    border: 3px solid #da5767;
+    outline: 0;
+    box-shadow: none;
+
+}
 </style>

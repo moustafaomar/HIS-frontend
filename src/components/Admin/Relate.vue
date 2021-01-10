@@ -14,7 +14,7 @@
         </div>
         <div class="user-info">
           <span class="user-name">
-            <strong>{{this.name}}</strong>
+            <strong>{{this.adminName}}</strong>
           </span>
           <span class="user-role">Admin</span>
         </div>
@@ -42,17 +42,15 @@
   <!-- sidebar-wrapper  -->
   <main class="page-content">
     <div class="container">
-      <h2>Welcome, {{name}}</h2>
-      <hr>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <p>This is your home page.</p>
-          <p>You can view your Doctors' times as well as send your doctors results you receive from external labs.</p>
-        </div>
-      </div>
-      <hr>
-
-
+      <form class="form-signin" @submit.prevent="create">
+        <h2 class="form-signin-heading">Create admin</h2>
+        <div class="alert alert-danger" v-if="error">{{ error }}</div>
+        <label for="DSSN" class="sr-only">Doctor SSN</label>
+        <input v-model="DSSN" type="text" id="DSSN" class="form-control" placeholder="Doctor SSN" required autofocus>
+        <label for="PSSN" class="sr-only">Patient SSN</label>
+        <input v-model="PSSN" type="text" id="PSSN" class="form-control" placeholder="Patient SSN" required autofocus>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </form>
     </div>
 
   </main>
@@ -62,27 +60,44 @@
 <script>
 import { mapGetters } from 'vuex'
 import axios from '../../axios'
+
 export default {
-  name: 'AdminDashboard',
+  name: 'Relate',
   data () {
     return {
-      name: ''
+      PSSN: '',
+      DSSN: '',
+      error: false,
+      admin: '',
+      adminName: ''
     }
+  },
+  computed: {
+    ...mapGetters({ currentAdmin: 'currentAdmin' })
   },
   mounted () {
     this.admin = this.currentAdmin
     this.getData()
   },
-  computed: {
-    ...mapGetters({ currentAdmin: 'currentAdmin' })
-  },
   methods: {
+    create () {
+      axios.post('http://localhost:5000/admin/relate', { 'did': this.DSSN, 'pid': this.PSSN })
+        .then((request) => {
+          if (request.status === 200) {
+            console.log(request.data)
+            this.loginSuccessful(request)
+          } else {
+            console.log(request.status)
+          }
+        })
+        .catch(() => this.loginFailed())
+    },
     async getData () {
       await axios.post('http://localhost:5000/admin/getdata', '', {headers: {'x-access-token': this.currentAdmin}}).then((res) => {
         if (res.status !== 200) {
           console.log(res.data.message)
         } else {
-          this.name = res.data.message[0]
+          this.adminName = res.data.message[0]
         }
       }).catch((error) => {
         console.log(error)
@@ -91,7 +106,9 @@ export default {
   }
 }
 </script>
+
 <style scoped>
+@import url('https://fonts.googleapis.com/css?family=PT+Sans');
 @keyframes swing {
   0% {
     transform: rotate(0deg);
@@ -572,5 +589,38 @@ body {
 .chiller-theme .sidebar-footer>a:last-child {
     border-right: none;
 }
+body{
+  background: #fff;
+  font-family: 'PT Sans', sans-serif;
+}
+h2{
+  padding-top: 1.5rem;
+}
+a{
+  color: #333;
+}
+a:hover{
+  color: #da5767;
+  text-decoration: none;
+}
+.card{
+  border: 0.40rem solid #f8f9fa;
+  top: 10%;
+}
+.form-control{
+  background-color: #f8f9fa;
+  padding: 20px;
+  padding: 25px 15px;
+  margin-bottom: 1.3rem;
+}
 
+.form-control:focus {
+
+    color: #000000;
+    background-color: #ffffff;
+    border: 3px solid #da5767;
+    outline: 0;
+    box-shadow: none;
+
+}
 </style>

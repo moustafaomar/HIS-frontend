@@ -46,8 +46,20 @@
       <hr>
       <div class="row">
         <div class="form-group col-md-12">
-          <p>This is your home page.</p>
-          <p>You can view your Doctors' times as well as send your doctors results you receive from external labs.</p>
+          <table v-if="this.data && this.data.length" class="table">
+              <thead>
+              <tr>
+              <th scope="col">Patient's Name</th>
+              <th scope="col">Doctor's Name</th>
+              </tr>
+              </thead>  
+              <tbody>
+              <tr v-for="row in this.data" :key="row[0]">
+                  <td>{{row[0]}}</td>
+                  <td>{{row[1]}}</td>
+              </tr>
+              </tbody>
+          </table>
         </div>
       </div>
       <hr>
@@ -63,15 +75,17 @@
 import { mapGetters } from 'vuex'
 import axios from '../../axios'
 export default {
-  name: 'AdminDashboard',
+  name: 'ViewLinked',
   data () {
     return {
-      name: ''
+      name: '',
+      data: []
     }
   },
   mounted () {
     this.admin = this.currentAdmin
     this.getData()
+    this.getPD()
   },
   computed: {
     ...mapGetters({ currentAdmin: 'currentAdmin' })
@@ -83,6 +97,17 @@ export default {
           console.log(res.data.message)
         } else {
           this.name = res.data.message[0]
+        }
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
+    getPD () {
+      axios.get('http://localhost:5000/admin/get_related', {headers: {'x-access-token': this.currentAdmin}}).then((res) => {
+        if (res.status !== 200) {
+          console.log(res.data.message)
+        } else {
+          this.data = res.data.data
         }
       }).catch((error) => {
         console.log(error)
