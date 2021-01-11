@@ -1,31 +1,31 @@
 <template>
 
-  <div id="row">
-	<header class="bg-image">
-  <div class="container">
+  <div id='row'>
+	<header class='bg-image'>
+  <div class='container'>
     <h1>HIS</h1>
-    <a href="/doctor/login" class="btn btn-transparent">Doctor</a>
-	<a href="/patient/login" class="btn btn-transparent">Patient</a>
-	<a href="/admin/login" class="btn btn-transparent">Admin</a>
+    <a href='/doctor/login' class='btn btn-transparent'>Doctor</a>
+	<a href='/patient/login' class='btn btn-transparent'>Patient</a>
+	<a href='/admin/login' class='btn btn-transparent'>Admin</a>
   </div>
 </header>
 
-<section class="section--primary">
-  <div class="container">
-    <div class="col-3 features">
-      <i class="fa fa-bolt"></i>
+<section class='section--primary'>
+  <div class='container'>
+    <div class='col-3 features'>
+      <i class='fa fa-bolt'></i>
       <p>
-        "Stay in contact with your doctor here"
+        'Stay in contact with your doctor here'
       </p>
     </div>
-    <div class="col-3 features">
-      <i class="fa fa-bank"></i>
+    <div class='col-3 features'>
+      <i class='fa fa-bank'></i>
       <p>
        This is why it's great.  Here's the one thing you should know about this product.
       </p>
     </div>
-    <div class="col-3 features">
-      <i class="fa fa-heart"></i>
+    <div class='col-3 features'>
+      <i class='fa fa-heart'></i>
       <p>
        Still curious?  Find out more by creating an account.
       </p>
@@ -33,21 +33,60 @@
   </div>
 </section>
 
-<section class="text--center">
-  <div class="container">
+<section class='text--center'>
+  <div class='container'>
     <h3>You know you like it.</h3>
-    <a href="#" class="btn">Create your account to stay in contact with your doctor now!</a>
+    <a href='#' class='btn'>Create your account to stay in contact with your doctor now!</a>
   </div>
 </section>
-
+<section>
+	<div class='container'>
+		<form @submit.prevent='send'>
+			<div class='form-group'>
+				<label for='fname'>Full name: *</label>
+				<input type='text' class='form-control' id='fname' v-model='fname' placeholder='Your full name...' required>
+			</div>
+			<div class='form-group'>
+				<label class='mt-3' for='email'>E-mail: *</label>
+				<input type='email' class='form-control' id='email' v-model='email' placeholder='Your e-mail...' required>
+			</div>
+			<div class='form-group'>
+				<label class='mt-3' for='comment'>Message</label>
+				<textarea class='form-control' id='comment' v-model='comment' rows='3' placeholder='Your comment here'></textarea>
+			</div>
+			<button type='submit' class='btn btn-primary bt'>Send now</button>
+			</form>
+		</div>
+</section>
 <footer>
-  <div class="container">
+  <div class='container'>
     <p>&copy; 2021 HIS. All rights reserved.</p>
   </div>
 </footer>
   </div>
   
 </template>
+
+
+<script>
+import axios from '../axios'
+export default {
+  name: 'Index',
+  data () {
+    return {
+      fname: '',
+      email: '',
+      comment: ''
+    }
+  },
+  methods: {
+    send () {
+      axios.post('http://localhost:5000/formsubmit', {'name': this.fname, 'email': this.email, 'content': this.comment})
+    }
+  }
+}
+</script>
+
 <style scoped>
 * {
   box-sizing: border-box;
