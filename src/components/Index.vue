@@ -87,7 +87,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+.container-fluid{
+	padding-right: 0;
+	padding-left: 0;
+}
 * {
   box-sizing: border-box;
 }

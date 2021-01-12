@@ -50,6 +50,9 @@
         <div class="form-group col-md-12">
           <p>We have a total of {{this.stats[0]}} patients</p>
           <p>We have a total of {{this.stats[1]}} doctors</p>
+          <div id="canvas-holder" style="width:60%">
+            <canvas id="chart-area"></canvas>
+          </div>
         </div>
       </div>
       <hr>
@@ -72,14 +75,52 @@ export default {
       stats: []
     }
   },
-  mounted () {
+  async mounted () {
     this.admin = this.currentAdmin
-    this.getData()
+    await this.getData()
   },
   computed: {
     ...mapGetters({ currentAdmin: 'currentAdmin' })
   },
   methods: {
+    async getstats () {
+      var config = {
+        type: 'doughnut',
+        data: {
+          datasets: [{
+            data: [
+              this.stats[0],
+              this.stats[1]
+            ],
+            backgroundColor: [
+              'rgb(255, 99, 132)',
+              'rgb(54, 162, 235)'
+            ],
+            label: 'Patient/Doctor data'
+          }],
+          labels: [
+            'Patient',
+            'Doctor'
+          ]
+        },
+        options: {
+          responsive: true,
+          legend: {
+            position: 'top'
+          },
+          title: {
+            display: true,
+            text: 'Patient to doctor ratio'
+          },
+          animation: {
+            animateScale: true,
+            animateRotate: true
+          }
+        }
+      }
+      var ctx = document.getElementById('chart-area').getContext('2d')
+      window.myDoughnut = new window.Chart(ctx, config)
+    },
     async getData () {
       await axios.post('http://localhost:5000/admin/getdata', '', {headers: {'x-access-token': this.currentAdmin}}).then((res) => {
         if (res.status !== 200) {
@@ -93,6 +134,7 @@ export default {
       await axios.post('http://localhost:5000/admin/getstats', '', {headers: {'x-access-token': this.currentAdmin}}).then((res) => {
         this.stats = res.data.message
       })
+      await this.getstats()
     }
   }
 }

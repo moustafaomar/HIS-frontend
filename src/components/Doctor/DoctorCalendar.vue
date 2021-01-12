@@ -90,7 +90,7 @@ export default {
     gapi.setAttribute('src', '//apis.google.com/js/api.js')
     gapi.async = true
     gapi.defer = true
-    gapi.onload = 'this.onload=function(){};handleClientLoad()'
+    gapi.onload = 'this.onload=function(){};this.setup()'
     const meta = document.createElement('meta')
     meta.name = 'google-signin-client_id'
     document.head.appendChild(gapi)
