@@ -97,7 +97,7 @@ export default {
   },
   methods: {
     create () {
-      axios.post('http://localhost:5000/admin/doctor/create', { 'SSN': this.SSN, 'Name': this.name, 'email': this.email, 'phone': this.phone, 'start_hour': this.sttime, 'end_hour': this.endtime, 'password': this.password }, {headers: {'x-access-token': this.currentAdmin}})
+      axios.post('http://localhost:5000/admin/doctor/create', { 'SSN': this.SSN, 'Name': this.name, 'email': this.email, 'phone': this.phone, 'start_hour': this.sttime, 'end_hour': this.endtime, 'password': this.password }, {headers: {'x-access-token': localStorage.adminToken}})
         .then((request) => {
           if (request.status === 200) {
             console.log(request.data)
@@ -109,7 +109,7 @@ export default {
         .catch()
     },
     async getData () {
-      await axios.post('http://localhost:5000/admin/getdata', '', {headers: {'x-access-token': this.currentAdmin}}).then((res) => {
+      await axios.post('http://localhost:5000/admin/getdata', '', {headers: {'x-access-token': localStorage.adminToken}}).then((res) => {
         if (res.status !== 200) {
           console.log(res.data.message)
         } else {

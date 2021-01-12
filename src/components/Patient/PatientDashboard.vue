@@ -86,7 +86,7 @@ export default {
   },
   methods: {
     async getData () {
-      await axios.post('http://localhost:5000/patient/getdata', '', {headers: {'x-access-token': this.patient}}).then((res) => {
+      await axios.post('http://localhost:5000/patient/getdata', '', {headers: {'x-access-token': localStorage.patientToken}}).then((res) => {
         if (res.status !== 200) {
           console.log(res.data.message)
         } else {

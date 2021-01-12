@@ -92,7 +92,7 @@ export default {
   },
   methods: {
     async getData () {
-      await axios.post('http://localhost:5000/admin/getdata', '', {headers: {'x-access-token': this.currentAdmin}}).then((res) => {
+      await axios.post('http://localhost:5000/admin/getdata', '', {headers: {'x-access-token': localStorage.adminToken}}).then((res) => {
         if (res.status !== 200) {
           console.log(res.data.message)
         } else {
@@ -103,7 +103,7 @@ export default {
       })
     },
     getPD () {
-      axios.get('http://localhost:5000/admin/get_related', {headers: {'x-access-token': this.currentAdmin}}).then((res) => {
+      axios.get('http://localhost:5000/admin/get_related', {headers: {'x-access-token': localStorage.adminToken}}).then((res) => {
         if (res.status !== 200) {
           console.log(res.data.message)
         } else {

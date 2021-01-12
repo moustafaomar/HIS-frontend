@@ -94,7 +94,7 @@ export default {
       var link = 'http://localhost:5000/patient/' + this.$route.params.pid + '/' + this.$route.params.did
       let formData = new FormData()
       formData.append('file', this.file)
-      axios.post(link, formData, {headers: {'x-access-token': this.patient}}).then((res) => {
+      axios.post(link, formData, {headers: {'x-access-token': localStorage.patientToken}}).then((res) => {
         console.log(res)
       })
     },
@@ -102,7 +102,7 @@ export default {
       this.file = event.target.files[0]
     },
     async getData () {
-      await axios.post('http://localhost:5000/patient/getdata', '', {headers: {'x-access-token': this.patient}}).then((res) => {
+      await axios.post('http://localhost:5000/patient/getdata', '', {headers: {'x-access-token': localStorage.patientToken}}).then((res) => {
         if (res.status !== 200) {
           console.log(res.data.message)
         } else {
