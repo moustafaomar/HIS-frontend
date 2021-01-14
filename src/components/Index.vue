@@ -19,7 +19,7 @@
       </p>
     </div>
     <div class='col-3 features'>
-      <i class='fa fa-bank'></i>
+      <i class='fa fa-stethoscope'></i>
       <p>
        This is why it's great.  Here's the one thing you should know about this product.
       </p>
