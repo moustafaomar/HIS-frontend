@@ -37,6 +37,9 @@
               </li>
           </ul>
           <li class="header-menu">
+            <a href="/doctor/calendar">Add to Calendar</a>
+          </li>
+          <li class="header-menu">
             <a href="/doctor/logout">Logout</a>
           </li>
         </ul>

@@ -15,6 +15,10 @@ import AdminLogout from '../components/Admin/AdminLogout'
 import AdminDashboard from '../components/Admin/AdminDashboard'
 import CreateDoctor from '../components/Admin/CreateDoctor'
 import ViewLinked from '../components/Admin/ViewLinked'
+import AdminPatients from '../components/Admin/AdminPatients'
+import AdminDoctors from '../components/Admin/AdminDoctors'
+import EditPatient from '../components/Admin/EditPatient'
+import EditDoctor from '../components/Admin/EditDoctor'
 import Relate from '../components/Admin/Relate'
 import CreateAdmin from '../components/Admin/CreateAdmin'
 import Index from '@/components/Index'
@@ -93,6 +97,26 @@ const router = new Router({
     {
       path: '/admin/createAdmin',
       component: CreateAdmin,
+      meta: { doctor: false, patient: false, admin: true }
+    },
+    {
+      path: '/admin/patients',
+      component: AdminPatients,
+      meta: { doctor: false, patient: false, admin: true }
+    },
+    {
+      path: '/admin/doctors',
+      component: AdminDoctors,
+      meta: { doctor: false, patient: false, admin: true }
+    },
+    {
+      path: '/admin/patients/edit/:ssn',
+      component: EditPatient,
+      meta: { doctor: false, patient: false, admin: true }
+    },
+    {
+      path: '/admin/doctors/edit/:ssn',
+      component: EditDoctor,
       meta: { doctor: false, patient: false, admin: true }
     },
     {

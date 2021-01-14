@@ -28,8 +28,11 @@
           </a>
           <ul>
               <a href="/admin/doctor/create"><li class="header-menu"><span>Create Doctor</span></li></a>
-              <a href="/admin/create"><li class="header-menu"><span>Create Admin</span></li></a>
+              <a href="/admin/doctors"><li class="header-menu"><span>Doctors</span></li></a>
+              <a href="/admin/patients"><li class="header-menu"><span>Patients</span></li></a>
               <a href="/admin/viewLinked"><li class="header-menu"><span>View Doctors and patients</span></li></a>
+              <a href="/admin/relate"><li class="header-menu"><span>Relate Doctor and patient</span></li></a>
+              <a href="/admin/createAdmin"><li class="header-menu"><span>Create Admin</span></li></a>
           </ul>
           <a href="/admin/logout">
           <li class="header-menu">

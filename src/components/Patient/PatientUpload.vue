@@ -33,7 +33,7 @@
           </li>
           <ul>
               <li class="header-menu" v-for="doc in docNames" :key="doc[1]">
-                <a :href="'/patient/doctor/'+doc[1]"><span>{{doc[0]}}</span></a>
+                <a :href="'/patient/'+pid+'/'+doc[1]"><span>{{doc[0]}}</span></a>
               </li>
           </ul>
           <li class="header-menu">

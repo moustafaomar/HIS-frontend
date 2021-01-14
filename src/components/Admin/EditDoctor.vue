@@ -6,7 +6,7 @@
   <nav id="sidebar" class="sidebar-wrapper">
     <div class="sidebar-content">
       <div class="sidebar-brand">
-        <a href="#">his - doctor</a>
+        <a href="#">his - admin</a>
       </div>
       <div class="sidebar-header">
         <div class="user-pic">
@@ -14,34 +14,31 @@
         </div>
         <div class="user-info">
           <span class="user-name">
-            <strong>{{this.name}}</strong>
+            <strong>Edit Doctor {{this.ssn}}</strong>
           </span>
-          <span class="user-role">Doctor</span>
+          <span class="user-role">Admin</span>
         </div>
       </div>
       <div class="sidebar-menu">
         <ul>
+          <a href="/admin/dashboard">
           <li class="header-menu">
-            <span>General</span>
+            <span>Home</span>
           </li>
-          <li class="sidebar-dropdown">
-            <a href="#">
-              <i class="fa fa-stethoscope"></i>
-              <span>Patients</span>
-              <span class="badge badge-pill badge-danger">{{this.noOfPatients}}</span>
-            </a>
-          </li>
+          </a>
           <ul>
-              <li class="header-menu" v-for="pat in patients" :key="pat[1]">
-                <a :href="'/doctor/'+did+'/'+pat[1]"><span>{{pat[0]}}</span></a>
-              </li>
+              <a href="/admin/doctor/create"><li class="header-menu"><span>Create Doctor</span></li></a>
+              <a href="/admin/doctors"><li class="header-menu"><span>Doctors</span></li></a>
+              <a href="/admin/patients"><li class="header-menu"><span>Patients</span></li></a>
+              <a href="/admin/viewLinked"><li class="header-menu"><span>View Doctors and patients</span></li></a>
+              <a href="/admin/relate"><li class="header-menu"><span>Relate Doctor and patient</span></li></a>
+              <a href="/admin/createAdmin"><li class="header-menu"><span>Create Admin</span></li></a>
           </ul>
+          <a href="/admin/logout">
           <li class="header-menu">
-            <a href="/doctor/calendar">Add to Calendar</a>
+            <span>Logout</span>
           </li>
-          <li class="header-menu">
-            <a href="/doctor/logout">Logout</a>
-          </li>
+          </a>
         </ul>
       </div>
     </div>
@@ -49,117 +46,68 @@
   <!-- sidebar-wrapper  -->
   <main class="page-content">
     <div class="container">
-      <h2>HIS - Doctor</h2>
-      <hr>
-      <div class="container">
-        <div class="row">
-          <button class="btn btn-success" @click="calendar">Save to calendar</button>
-        </div>
-      </div>
-      <hr>
+      <form class="form-signin" @submit.prevent="update">
+        <label for="name" class="sr-only">Name</label>
+        <input v-model="name" type="text" id="name" class="form-control" placeholder="Name" required autofocus>
+        <label for="phone" class="sr-only">Phone</label>
+        <input v-model="phone" type="text" id="phone" class="form-control" placeholder="Phone" required autofocus>
+        <label for="email" class="sr-only">Email</label>
+        <input v-model="email" type="email" id="email" class="form-control" placeholder="Email" required autofocus>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Update Doctor</button>
+      </form>
     </div>
 
   </main>
   <!-- page-content" -->
 </div>
-<!-- page-wrapper -->
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import axios from '../../axios'
+
 export default {
-  name: 'DoctorCalendar',
+  name: 'EditDoctor',
   data () {
     return {
-      did: JSON.parse(atob(localStorage.token.split('.')[1])).user,
-      patients: [],
-      noOfPatients: 0,
-      sttime: '',
-      endtime: '',
       name: '',
-      doctor: '',
-      authorized: false,
-      CLIENT_ID: '73494404649-gebipd261piu7cevvhd9spg1ug5blpju.apps.googleusercontent.com',
-      API_KEY: 'AIzaSyAM6u6dVmcjRsBcoBNFCl7AT36-9piliXI',
-      DISCOVERY_DOCS: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
-      SCOPES: 'https://www.googleapis.com/auth/calendar.events'
+      phone: '',
+      email: '',
+      ssn: this.$route.params.ssn
     }
   },
-  created () {
-    let gapi = document.createElement('script')
-    gapi.setAttribute('src', '//apis.google.com/js/api.js')
-    gapi.async = true
-    gapi.defer = true
-    gapi.onload = 'this.onload=function(){};this.setup()'
-    const meta = document.createElement('meta')
-    meta.name = 'google-signin-client_id'
-    document.head.appendChild(gapi)
+  computed: {
+    ...mapGetters({ currentAdmin: 'currentAdmin' })
   },
   mounted () {
-    this.doctor = this.currentUser
+    this.admin = this.currentAdmin
     this.getData()
   },
-  computed: {
-    ...mapGetters({ currentUser: 'currentUser' })
-  },
   methods: {
-    async setup () {
-      await window.gapi.client.init({
-        apiKey: this.API_KEY,
-        clientId: this.CLIENT_ID,
-        discoveryDocs: this.DISCOVERY_DOCS,
-        scope: this.SCOPES
-      })
-    },
-    calendar () {
-      window.gapi.load('client:auth2', this.setup)
-      window.gapi.auth2.getAuthInstance().signIn()
-      this.createEvent()
-    },
-    createEvent () {
-      if (window.gapi.auth2.getAuthInstance().isSignedIn.get()) {
-        var resource = {
-          'summary': 'Your hospital daily schedule',
-          'location': '800 Myhosp, Cairo, EGY',
-          'description': 'Hospital slots',
-          'start': {
-            'dateTime': this.sttime,
-            'timeZone': 'America/Los_Angeles'
-          },
-          'end': {
-            'dateTime': this.endtime,
-            'timeZone': 'America/Los_Angeles'
-          },
-          'recurrence': [
-            'RRULE:FREQ=DAILY;UNTIL=20300701T170000Z'
-          ]
-        }
-        var request = window.gapi.client.calendar.events.insert({
-          'calendarId': 'primary',
-          'resource': resource
+    update () {
+      axios.post('http://localhost:5000/admin/doctor/edit', {'SSN': this.ssn, 'Name': this.name, 'phone': this.phone, 'email': this.email}, {headers: {'x-access-token': localStorage.adminToken}})
+        .then((request) => {
+          if (request.status === 200) {
+            console.log(request.data)
+            this.$router.push('/admin/dashboard')
+          } else {
+            console.log(request.status)
+          }
         })
-        request.execute()
-      }
+        .catch()
     },
     async getData () {
-      await axios.post('http://localhost:5000/doctor/getdata', '', {headers: {'x-access-token': localStorage.token}}).then((res) => {
-        if (res.status !== 200) {
-          console.log(res.data.message)
-        } else {
-          this.name = res.data.message[0]
-          this.sttime = res.data.message[1]
-          this.endtime = res.data.message[2]
-          this.noOfPatients = res.data.message[3]
-          this.patients = res.data.message[4]
-        }
-      }).catch((error) => {
-        console.log(error)
+      await axios.get('http://localhost:5000/admin/doctor/get/' + this.ssn, {headers: {'x-access-token': localStorage.adminToken}}).then((res) => {
+        this.name = res.data.data[0]
+        this.phone = res.data.data[1]
+        this.email = res.data.data[2]
       })
     }
   }
 }
 </script>
+
 <style scoped>
+@import url('https://fonts.googleapis.com/css?family=PT+Sans');
 @keyframes swing {
   0% {
     transform: rotate(0deg);
@@ -640,5 +588,38 @@ body {
 .chiller-theme .sidebar-footer>a:last-child {
     border-right: none;
 }
+body{
+  background: #fff;
+  font-family: 'PT Sans', sans-serif;
+}
+h2{
+  padding-top: 1.5rem;
+}
+a{
+  color: #333;
+}
+a:hover{
+  color: #da5767;
+  text-decoration: none;
+}
+.card{
+  border: 0.40rem solid #f8f9fa;
+  top: 10%;
+}
+.form-control{
+  background-color: #f8f9fa;
+  padding: 20px;
+  padding: 25px 15px;
+  margin-bottom: 1.3rem;
+}
 
+.form-control:focus {
+
+    color: #000000;
+    background-color: #ffffff;
+    border: 3px solid #da5767;
+    outline: 0;
+    box-shadow: none;
+
+}
 </style>
