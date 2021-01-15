@@ -315,9 +315,6 @@ section p {
   font-size: 1rem;
 }
 @media (max-width: 43.75em) {
-  .features p {
-    margin-left: 3rem;
-  }
 }
 blockquote {
   position: relative;
