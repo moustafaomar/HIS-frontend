@@ -2,9 +2,31 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>HIS - CUFE</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" />
+    <style>
+      @media only screen and (max-width: 400px) {
+        .page-wrapper.toggled .sidebar-wrapper{
+          width:40%;
+        }
+        .sidebar-wrapper .sidebar-menu ul li a span.label[data-v-5c3b684e], .sidebar-wrapper .sidebar-menu ul li a span.badge{
+          display:none;
+        }
+        .page-wrapper .page-content{
+          padding-left:0!important;
+          margin-left:2%!important;
+          width:60%!important;
+          float:right!important;
+          padding:0!important;
+        }
+        .container {
+          padding:0!important;
+          margin-left:8%!important;
+        }
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>

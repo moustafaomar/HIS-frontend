@@ -50,6 +50,7 @@
       <hr>
       <div class="row">
         <div class="form-group col-md-12">
+          <div class="table-responsive">
           <table v-if="this.data && this.data.length" class="table">
               <thead>
               <tr>
@@ -72,6 +73,7 @@
               </tr>
               </tbody>
           </table>
+          </div>
         </div>
       </div>
       <hr>

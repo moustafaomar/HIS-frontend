@@ -131,7 +131,7 @@ export default {
             'timeZone': 'America/Los_Angeles'
           },
           'recurrence': [
-            'RRULE:FREQ=DAILY;UNTIL=20300701T170000Z'
+            'RRULE:FREQ=DAILY;UNTIL=20210505T170000Z'
           ]
         }
         var request = window.gapi.client.calendar.events.insert({

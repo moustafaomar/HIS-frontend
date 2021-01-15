@@ -57,7 +57,7 @@
             <li v-for="file in files" :key="file">
               File Name: {{file[1]}}
               <hr>
-              File URL: {{file[0]}}
+              <a :href=file[0]> Click here </a>
               <br>
             </li>
           </ul>
@@ -107,7 +107,7 @@ export default {
       }).catch((error) => {
         console.log(error)
       })
-      await axios.post('http://localhost:5000/doctor/getfiles/' + this.pid, '', {headers: {'x-access-token': this.token}}).then((res) => {
+      await axios.post('http://localhost:5000/doctor/getfiles/' + this.pid, '', {headers: {'x-access-token': localStorage.token}}).then((res) => {
         this.files = res.data.message[0]
       })
     }
