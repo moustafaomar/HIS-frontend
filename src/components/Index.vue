@@ -36,7 +36,7 @@
 <section class='text--center'>
   <div class='container'>
     <h3>You know you like it.</h3>
-    <a href='#' class='btn'>Create your account to stay in contact with your doctor now!</a>
+    <a href='#' class='btn'>Create your account!</a>
   </div>
 </section>
 <section>
