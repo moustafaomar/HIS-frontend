@@ -34,6 +34,11 @@
               <a href="/admin/relate"><li class="header-menu"><span>Relate Doctor and patient</span></li></a>
               <a href="/admin/createAdmin"><li class="header-menu"><span>Create Admin</span></li></a>
           </ul>
+          <a href="/admin/rooms">
+          <li class="header-menu">
+            <span>Rooms</span>
+          </li>
+          </a>
           <a href="/admin/logout">
           <li class="header-menu">
             <span>Logout</span>
@@ -56,12 +61,14 @@
               <tr>
               <th scope="col">Patient's Name</th>
               <th scope="col">Doctor's Name</th>
+              <th scope="col"></th>
               </tr>
               </thead>  
               <tbody>
               <tr v-for="row in this.data" :key="row[0]">
                   <td>{{row[0]}}</td>
                   <td>{{row[1]}}</td>
+                  <td><button class="btn btn-md btn-primary btn-block" @click="deleteR(row[2],row[3])">Clear Relation</button></td>
               </tr>
               </tbody>
           </table>
@@ -97,6 +104,11 @@ export default {
     ...mapGetters({ currentAdmin: 'currentAdmin' })
   },
   methods: {
+    deleteR (P, D) {
+      axios.post('http://localhost:5000/admin/unrelate', {'pssn': P, 'dssn': D}, {headers: {'x-access-token': localStorage.adminToken}}).then((res) => {
+        this.getPD()
+      })
+    },
     async getData () {
       await axios.post('http://localhost:5000/admin/getdata', '', {headers: {'x-access-token': localStorage.adminToken}}).then((res) => {
         if (res.status !== 200) {

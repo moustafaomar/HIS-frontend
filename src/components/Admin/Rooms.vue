@@ -6,7 +6,7 @@
   <nav id="sidebar" class="sidebar-wrapper">
     <div class="sidebar-content">
       <div class="sidebar-brand">
-        <a href="#">his - doctor</a>
+        <a href="#">his - admin</a>
       </div>
       <div class="sidebar-header">
         <div class="user-pic">
@@ -16,35 +16,34 @@
           <span class="user-name">
             <strong>{{this.name}}</strong>
           </span>
-          <span class="user-role">Doctor</span>
+          <span class="user-role">Admin</span>
         </div>
       </div>
       <div class="sidebar-menu">
         <ul>
+          <a href="/admin/dashboard">
           <li class="header-menu">
-            <span>General</span>
+            <span>Home</span>
           </li>
-          <li class="sidebar-dropdown">
-            <a href="#">
-              <i class="fa fa-stethoscope"></i>
-              <span>Patients</span>
-              <span class="badge badge-pill badge-danger">{{this.noOfPatients}}</span>
-            </a>
-          </li>
+          </a>
           <ul>
-              <li class="header-menu" v-for="pat in patients" :key="pat[1]">
-                <a :href="'/doctor/'+did+'/'+pat[1]"><span>{{pat[0]}}</span></a>
-              </li>
+              <a href="/admin/doctor/create"><li class="header-menu"><span>Create Doctor</span></li></a>
+              <a href="/admin/doctors"><li class="header-menu"><span>Doctors</span></li></a>
+              <a href="/admin/patients"><li class="header-menu"><span>Patients</span></li></a>
+              <a href="/admin/viewLinked"><li class="header-menu"><span>View Doctors and patients</span></li></a>
+              <a href="/admin/relate"><li class="header-menu"><span>Relate Doctor and patient</span></li></a>
+              <a href="/admin/createAdmin"><li class="header-menu"><span>Create Admin</span></li></a>
           </ul>
+          <a href="/admin/rooms">
           <li class="header-menu">
-            <a href="/doctor/calendar">Add to Calendar</a>
+            <span>Rooms</span>
           </li>
+          </a>
+          <a href="/admin/logout">
           <li class="header-menu">
-            <a href="/doctor/viewCalendar">View Calendar</a>
+            <span>Logout</span>
           </li>
-          <li class="header-menu">
-            <a href="/doctor/logout">Logout</a>
-          </li>
+          </a>
         </ul>
       </div>
     </div>
@@ -52,111 +51,86 @@
   <!-- sidebar-wrapper  -->
   <main class="page-content">
     <div class="container">
-      <h2>HIS - Doctor</h2>
+      <h2>Rooms currently in use</h2>
       <hr>
-      <div class="container">
-        <div class="row">
-          <button class="btn btn-success" @click="calendar">Save to calendar</button>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <div class="table-responsive">
+          <table class="table">
+              <thead>
+              <tr>
+              <th scope="col">Room No</th>
+              <th scope="col">Doctor's Name</th>
+              <th scope="col">Patient's Name</th>
+              <th scope="col">Clear</th>
+              </tr>
+              </thead>  
+              <tbody>
+              <tr v-for="row in this.data" :key="row[0]">
+                  <td>{{row[0]}}</td>
+                  <td>{{row[1]}}</td>
+                  <td>{{row[2]}}</td>
+                  <td><button @click="clear(row[0])" class="btn btn-md btn-primary btn-block" type="submit">Clear</button></td>
+              </tr>
+              </tbody>
+          </table>
+          </div>
         </div>
       </div>
       <hr>
+
+
     </div>
 
   </main>
   <!-- page-content" -->
 </div>
-<!-- page-wrapper -->
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import axios from '../../axios'
 export default {
-  name: 'DoctorCalendar',
+  name: 'Rooms',
   data () {
     return {
-      did: JSON.parse(atob(localStorage.token.split('.')[1])).user,
-      patients: [],
-      noOfPatients: 0,
-      sttime: '',
-      endtime: '',
       name: '',
-      doctor: '',
-      authorized: false,
-      CLIENT_ID: '73494404649-gebipd261piu7cevvhd9spg1ug5blpju.apps.googleusercontent.com',
-      API_KEY: 'AIzaSyAM6u6dVmcjRsBcoBNFCl7AT36-9piliXI',
-      DISCOVERY_DOCS: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
-      SCOPES: 'https://www.googleapis.com/auth/calendar.events'
+      data: []
     }
   },
-  created () {
-    let gapi = document.createElement('script')
-    gapi.setAttribute('src', '//apis.google.com/js/api.js')
-    gapi.async = true
-    gapi.defer = true
-    gapi.onload = 'this.onload=function(){};this.setup()'
-    const meta = document.createElement('meta')
-    meta.name = 'google-signin-client_id'
-    document.head.appendChild(gapi)
-  },
   mounted () {
-    this.doctor = this.currentUser
+    this.admin = this.currentAdmin
     this.getData()
+    this.getPD()
   },
   computed: {
-    ...mapGetters({ currentUser: 'currentUser' })
+    ...mapGetters({ currentAdmin: 'currentAdmin' })
   },
   methods: {
-    async setup () {
-      await window.gapi.client.init({
-        apiKey: this.API_KEY,
-        clientId: this.CLIENT_ID,
-        discoveryDocs: this.DISCOVERY_DOCS,
-        scope: this.SCOPES
-      })
-    },
-    calendar () {
-      window.gapi.load('client:auth2', this.setup)
-      window.gapi.auth2.getAuthInstance().signIn()
-      this.createEvent()
-    },
-    createEvent () {
-      if (window.gapi.auth2.getAuthInstance().isSignedIn.get()) {
-        var resource = {
-          'summary': 'Your hospital daily schedule',
-          'location': '800 Myhosp, Cairo, EGY',
-          'description': 'Hospital slots',
-          'start': {
-            'dateTime': this.sttime,
-            'timeZone': 'America/Los_Angeles'
-          },
-          'end': {
-            'dateTime': this.endtime,
-            'timeZone': 'America/Los_Angeles'
-          },
-          'recurrence': [
-            'RRULE:FREQ=DAILY;UNTIL=20210505T170000Z'
-          ]
-        }
-        var request = window.gapi.client.calendar.events.insert({
-          'calendarId': 'primary',
-          'resource': resource
-        })
-        request.execute()
-      }
-    },
     async getData () {
-      await axios.post('http://localhost:5000/doctor/getdata', '', {headers: {'x-access-token': localStorage.token}}).then((res) => {
+      await axios.post('http://localhost:5000/admin/getdata', '', {headers: {'x-access-token': localStorage.adminToken}}).then((res) => {
         if (res.status !== 200) {
           console.log(res.data.message)
         } else {
           this.name = res.data.message[0]
-          this.sttime = res.data.message[1]
-          this.endtime = res.data.message[2]
-          this.noOfPatients = res.data.message[3]
-          this.patients = res.data.message[4]
         }
       }).catch((error) => {
         console.log(error)
+      })
+    },
+    getPD () {
+      axios.get('http://localhost:5000/admin/get_rooms', {headers: {'x-access-token': localStorage.adminToken}}).then((res) => {
+        if (res.status !== 200) {
+          console.log(res.data.message)
+        } else {
+          this.data = res.data.message
+        }
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
+    clear (id) {
+      axios.post('http://localhost:5000/admin/clear_room', {'roomno': id}, {headers: {'x-access-token': localStorage.adminToken}}).then((res) => {
+        this.getPD()
       })
     }
   }

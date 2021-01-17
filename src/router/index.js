@@ -8,6 +8,7 @@ import PatientSignup from '../components/Patient/PatientSignup'
 import PatientUpload from '../components/Patient/PatientUpload'
 import DoctorLogout from '../components/Doctor/DoctorLogout'
 import DoctorCalendar from '../components/Doctor/DoctorCalendar'
+import ViewCalendar from '../components/Doctor/ViewCalendar'
 import DoctorFiles from '../components/Doctor/DoctorFiles'
 import PatientLogout from '../components/Patient/PatientLogout'
 import AdminLogin from '../components/Admin/AdminLogin'
@@ -17,8 +18,11 @@ import CreateDoctor from '../components/Admin/CreateDoctor'
 import ViewLinked from '../components/Admin/ViewLinked'
 import AdminPatients from '../components/Admin/AdminPatients'
 import AdminDoctors from '../components/Admin/AdminDoctors'
+import Rooms from '../components/Admin/Rooms'
 import EditPatient from '../components/Admin/EditPatient'
 import EditDoctor from '../components/Admin/EditDoctor'
+import AddtoRoom from '../components/Admin/AddtoRoom'
+import AddPatienttoRoom from '../components/Admin/AddPatienttoRoom'
 import Relate from '../components/Admin/Relate'
 import CreateAdmin from '../components/Admin/CreateAdmin'
 import Index from '@/components/Index'
@@ -70,6 +74,11 @@ const router = new Router({
       meta: { doctor: true, patient: false, admin: false }
     },
     {
+      path: '/doctor/viewCalendar',
+      component: ViewCalendar,
+      meta: { doctor: true, patient: false, admin: false }
+    },
+    {
       path: '/patient/dashboard',
       component: PatientDashboard,
       meta: { patient: true, doctor: false, admin: false }
@@ -87,6 +96,11 @@ const router = new Router({
     {
       path: '/admin/dashboard',
       component: AdminDashboard,
+      meta: { doctor: false, patient: false, admin: true }
+    },
+    {
+      path: '/admin/rooms',
+      component: Rooms,
       meta: { doctor: false, patient: false, admin: true }
     },
     {
@@ -117,6 +131,16 @@ const router = new Router({
     {
       path: '/admin/doctors/edit/:ssn',
       component: EditDoctor,
+      meta: { doctor: false, patient: false, admin: true }
+    },
+    {
+      path: '/admin/doctors/DtR/:ssn',
+      component: AddtoRoom,
+      meta: { doctor: false, patient: false, admin: true }
+    },
+    {
+      path: '/admin/patients/PtR/:ssn',
+      component: AddPatienttoRoom,
       meta: { doctor: false, patient: false, admin: true }
     },
     {

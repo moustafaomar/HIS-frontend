@@ -40,6 +40,9 @@
             <a href="/doctor/calendar">Add to Calendar</a>
           </li>
           <li class="header-menu">
+            <a href="/doctor/viewCalendar">View Calendar</a>
+          </li>
+          <li class="header-menu">
             <a href="/doctor/logout">Logout</a>
           </li>
         </ul>
@@ -54,6 +57,10 @@
       <div class="row">
         <div class="form-group col-md-12">
           <p>Welcome to the HIS app</p>
+          <p v-if="rooms.length">You are managing rooms number:</p>
+          <ul>
+            <li v-for="room in rooms" :key="room[0]">{{room[0]}}</li>
+          </ul>
         </div>
       </div>
       <hr>
@@ -75,7 +82,8 @@ export default {
       noOfPatients: 0,
       name: '',
       doctor: '',
-      patients: []
+      patients: [],
+      rooms: []
     }
   },
   mounted () {
@@ -97,6 +105,9 @@ export default {
         }
       }).catch((error) => {
         console.log(error)
+      })
+      await axios.get('http://localhost:5000/doctor/rooms', {headers: {'x-access-token': localStorage.token}}).then((res) => {
+        this.rooms = res.data.data
       })
     }
   }

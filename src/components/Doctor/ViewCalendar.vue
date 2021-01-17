@@ -56,10 +56,13 @@
       <hr>
       <div class="container">
         <div class="row">
-          <button class="btn btn-success" @click="calendar">Save to calendar</button>
+          <button class="btn btn-success" @click="calendar">Check my daily calendar</button>
         </div>
       </div>
       <hr>
+      <ul>
+        <li v-for="event in events" :key="event['id']">{{event['summary']}} FROM {{event['start']['dateTime']}} TO {{event['end']['dateTime']}}</li>
+      </ul>
     </div>
 
   </main>
@@ -75,20 +78,17 @@ export default {
   data () {
     return {
       did: JSON.parse(atob(localStorage.token.split('.')[1])).user,
+      events: 0,
       patients: [],
       noOfPatients: 0,
-      sttime: '',
-      endtime: '',
       name: '',
-      doctor: '',
-      authorized: false,
       CLIENT_ID: '73494404649-gebipd261piu7cevvhd9spg1ug5blpju.apps.googleusercontent.com',
       API_KEY: 'AIzaSyAM6u6dVmcjRsBcoBNFCl7AT36-9piliXI',
       DISCOVERY_DOCS: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
       SCOPES: 'https://www.googleapis.com/auth/calendar.events'
     }
   },
-  created () {
+  /* created () {
     let gapi = document.createElement('script')
     gapi.setAttribute('src', '//apis.google.com/js/api.js')
     gapi.async = true
@@ -97,7 +97,7 @@ export default {
     const meta = document.createElement('meta')
     meta.name = 'google-signin-client_id'
     document.head.appendChild(gapi)
-  },
+  }, */
   mounted () {
     this.doctor = this.currentUser
     this.getData()
@@ -117,32 +117,20 @@ export default {
     calendar () {
       window.gapi.load('client:auth2', this.setup)
       window.gapi.auth2.getAuthInstance().signIn()
-      this.createEvent()
+      this.listEvents()
     },
-    createEvent () {
-      if (window.gapi.auth2.getAuthInstance().isSignedIn.get()) {
-        var resource = {
-          'summary': 'Your hospital daily schedule',
-          'location': '800 Myhosp, Cairo, EGY',
-          'description': 'Hospital slots',
-          'start': {
-            'dateTime': this.sttime,
-            'timeZone': 'America/Los_Angeles'
-          },
-          'end': {
-            'dateTime': this.endtime,
-            'timeZone': 'America/Los_Angeles'
-          },
-          'recurrence': [
-            'RRULE:FREQ=DAILY;UNTIL=20210505T170000Z'
-          ]
-        }
-        var request = window.gapi.client.calendar.events.insert({
-          'calendarId': 'primary',
-          'resource': resource
-        })
-        request.execute()
-      }
+    listEvents () {
+      window.gapi.client.calendar.events.list({
+        'calendarId': 'primary',
+        'timeMin': (new Date()).toISOString(),
+        'showDeleted': false,
+        'singleEvents': true,
+        'maxResults': 10,
+        'orderBy': 'startTime',
+        'immediate': true
+      }).then((response) => {
+        this.events = response.result.items
+      })
     },
     async getData () {
       await axios.post('http://localhost:5000/doctor/getdata', '', {headers: {'x-access-token': localStorage.token}}).then((res) => {
@@ -150,8 +138,6 @@ export default {
           console.log(res.data.message)
         } else {
           this.name = res.data.message[0]
-          this.sttime = res.data.message[1]
-          this.endtime = res.data.message[2]
           this.noOfPatients = res.data.message[3]
           this.patients = res.data.message[4]
         }

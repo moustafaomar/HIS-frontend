@@ -34,6 +34,11 @@
               <a href="/admin/relate"><li class="header-menu"><span>Relate Doctor and patient</span></li></a>
               <a href="/admin/createAdmin"><li class="header-menu"><span>Create Admin</span></li></a>
           </ul>
+          <a href="/admin/rooms">
+          <li class="header-menu">
+            <span>Rooms</span>
+          </li>
+          </a>
           <a href="/admin/logout">
           <li class="header-menu">
             <span>Logout</span>
@@ -60,6 +65,7 @@
               <th scope="col">Doctor's Phone</th>
               <th scope="col"></th>
               <th scope="col"></th>
+              <th scope="col"></th>
               </tr>
               </thead>  
               <tbody>
@@ -70,6 +76,7 @@
                   <td>{{row[3]}}</td>
                   <td><button data-toggle="modal" @click="edit(row[1])" class="btn btn-success">Edit</button></td>
                   <td><button class="btn btn-danger" @click="deleteD(row[1])">Delete</button></td>
+                  <td><button class="btn btn-primary" @click="AddToRoom(row[1])">Add to room</button></td>
               </tr>
               </tbody>
           </table>
@@ -110,6 +117,9 @@ export default {
       axios.post('http://localhost:5000/admin/deleteD', {'ssn': ssn}, {headers: {'x-access-token': localStorage.adminToken}}).then(() => {
         this.getDD()
       })
+    },
+    AddToRoom (ssn) {
+      this.$router.push('/admin/doctors/DtR/' + ssn)
     },
     async getData () {
       await axios.post('http://localhost:5000/admin/getdata', '', {headers: {'x-access-token': localStorage.adminToken}}).then((res) => {

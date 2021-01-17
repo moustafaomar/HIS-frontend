@@ -34,6 +34,11 @@
               <a href="/admin/relate"><li class="header-menu"><span>Relate Doctor and patient</span></li></a>
               <a href="/admin/createAdmin"><li class="header-menu"><span>Create Admin</span></li></a>
           </ul>
+          <a href="/admin/rooms">
+          <li class="header-menu">
+            <span>Rooms</span>
+          </li>
+          </a>
           <a href="/admin/logout">
           <li class="header-menu">
             <span>Logout</span>

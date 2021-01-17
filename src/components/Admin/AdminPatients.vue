@@ -34,6 +34,11 @@
               <a href="/admin/relate"><li class="header-menu"><span>Relate Doctor and patient</span></li></a>
               <a href="/admin/createAdmin"><li class="header-menu"><span>Create Admin</span></li></a>
           </ul>
+          <a href="/admin/rooms">
+          <li class="header-menu">
+            <span>Rooms</span>
+          </li>
+          </a>
           <a href="/admin/logout">
           <li class="header-menu">
             <span>Logout</span>
@@ -59,6 +64,7 @@
               <th scope="col">Patient's Phone</th>
               <th scope="col"></th>
               <th scope="col"></th>
+              <th scope="col"></th>
               </tr>
               </thead>  
               <tbody>
@@ -68,6 +74,7 @@
                   <td>{{row[2]}}</td>
                   <td><button data-toggle="modal" @click="edit(row[1])" class="btn btn-success">Edit</button></td>
                   <td><button class="btn btn-danger" @click="deleteP(row[1])">Delete</button></td>
+                  <td><button class="btn btn-primary" @click="AddToRoom(row[1])">Add to room</button></td>
               </tr>
               </tbody>
           </table>
@@ -101,6 +108,9 @@ export default {
     ...mapGetters({ currentAdmin: 'currentAdmin' })
   },
   methods: {
+    AddToRoom (ssn) {
+      this.$router.push('/admin/patients/PtR/' + ssn)
+    },
     edit (ssn) {
       this.$router.push('/admin/patients/edit/' + ssn)
     },
